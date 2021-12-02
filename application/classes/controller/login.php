@@ -62,7 +62,7 @@ class Controller_login extends Controller_Mintemplate {
                         {
                             $user = $auth->loginldap(html::chars($_POST['username']), html::chars($_POST['password']), $remember);
                             if ($user) {
-                                $usuario = ORM::factory('users', true);
+                                $usuario = ORM::factory('users', $auth->get_user());
 
                                 $session = Session::instance();
                                 $session->set('username', $usuario->nombre);
