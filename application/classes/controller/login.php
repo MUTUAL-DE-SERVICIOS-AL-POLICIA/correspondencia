@@ -30,7 +30,8 @@ class Controller_login extends Controller_Mintemplate {
                         $remember = TRUE;
                     }
                     // si se solicita la autenticacion via LDAP
-                    if($ldap)
+                    $usuario_ventanilla = ORM::factory('users')->where('username', '=', $_POST['username'])->find();
+                    if($ldap && $usuario_ventanilla->nivel <> 4)
                     {
                         //obtencion de datos de configuracion al ldap
                         $config = array(
