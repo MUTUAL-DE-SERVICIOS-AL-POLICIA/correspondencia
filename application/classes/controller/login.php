@@ -31,7 +31,12 @@ class Controller_login extends Controller_Mintemplate {
                     }
                     // si se solicita la autenticacion via LDAP
                     $usuario_ventanilla = ORM::factory('users')->where('username', '=', $_POST['username'])->find();
-                    if($ldap && $usuario_ventanilla->nivel <> 4)
+                    $sql="SELECT u.id
+                            from users u
+                            where u.cargo like 'Dirección%'"
+                    $modelo = new Model_Users();
+                    $report=$modelo->select($sql);
+                    if($ldap && $usuario_ventanilla->nivel <> 4 && $usuario_ventanilla->id <> 11 && !in_array($usuario_ventanilla->id,$report))
                     {
                         //obtencion de datos de configuracion al ldap
                         $config = array(
