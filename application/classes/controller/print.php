@@ -35,7 +35,7 @@ class Controller_Print extends Controller {
                     if (strtolower($info['extension']) == 'jpg') {
                         $pdf->Image($image_file, 10, 3, 63, 24, 'jpg', '', '', FALSE, 300, '', FALSE, FALSE, 1);
                     } else {
-                        $pdf->Image($image_file, 10, 3, 63, 24, 'png', '', '', FALSE, 300, '', FALSE, FALSE, 1);
+                        $pdf->Image($image_file, 10, 0, 63, 35, 'png', '', '', FALSE, 300, '', FALSE, FALSE, 1);
                     }
                 }
                 $pdf->Ln(12);
@@ -44,10 +44,10 @@ class Controller_Print extends Controller {
                 //hoja de seguimiento    
                 if ($rs->id_tipo != 6):  //tipo 6 = carta externa
                     $pdf->Cell(60, 6, 'HOJA DE RUTA INTERNA', 1, FALSE, 'C');
-                    $pdf->Code39(151, 5, $rs->nur, 0.71, 5);                    
+                    $pdf->Code39(150, 5, $rs->nur, 0.71, 5);                    
                 //$pdf->Code39(152,21,$rs->nur,0.71,8);    
                 else:                    
-                    $pdf->Code39(151, 5, $rs->nur, 0.71, 5);
+                    $pdf->Code39(150, 5, $rs->nur, 0.71, 5);
                     $pdf->Cell(60, 6, 'HOJA DE RUTA EXTERNA', 1, FALSE, 'C');
                 endif;
                 //$pdf->Code39(155,21,$rs->nur,0.71,8);
@@ -152,7 +152,7 @@ class Controller_Print extends Controller {
                 //MODIFICADO POR QC
                 if($rs->id_tipo != 6)
                 {
-                    $pdf->Cell(25, 5, 'PROCESO', 'LTB', FALSE, 'l');
+                    $pdf->Cell(25, 5, 'PROCESO:', 'LTB', FALSE, 'l');
                     $pdf->Cell(47, 5, $rs->proceso, 'TRB', 'L');
                 }
                 else
@@ -219,6 +219,12 @@ class Controller_Print extends Controller {
                     }
 
                     $pdf->MultiCell(144, 5, $proveido, 'RL', 'L');
+                    $pdf->MultiCell(130, 5, '
+                    ---------------------------------------------------------------------------------------------------------------------
+                    ---------------------------------------------------------------------------------------------------------------------
+                    ---------------------------------------------------------------------------------------------------------------------
+                    ---------------------------------------------------------------------------------------------------------------------
+                    FIRMA', '', 'C');
                     $pdf->SetXY(10, $pa);
                     $pdf->SetFontSize(10);
                     $pdf->Cell(144, 39, '', 'RL', FALSE, 'L');
@@ -306,6 +312,12 @@ class Controller_Print extends Controller {
                         //proveido
                         $pdf->SetFontSize(8);
                         $pdf->MultiCell(144, 5, utf8_decode(''), 'RL', 'L');
+                        $pdf->MultiCell(130, 5, '
+                    ---------------------------------------------------------------------------------------------------------------------
+                    ---------------------------------------------------------------------------------------------------------------------
+                    ---------------------------------------------------------------------------------------------------------------------
+                    ---------------------------------------------------------------------------------------------------------------------
+                    FIRMA', '', 'C');
                         $pdf->SetXY(10, $pa);
                         $pdf->SetFontSize(10);
                         $pdf->Cell(144, 38, '', 'RL', FALSE, 'L');
