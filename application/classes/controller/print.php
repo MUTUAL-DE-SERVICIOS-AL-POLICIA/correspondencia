@@ -3,22 +3,23 @@
 defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Print extends Controller {
-    public function action_hre()
-    {
+
+    public function action_hr() {
         $auth = Auth::instance();
         if ($auth->logged_in() && isset($_GET['code'])) {
             $pro = 0;
             if (isset($_GET['p'])) {
                 $pro = $_GET['p'];
-            }//echo 'hola';
+            }
+
+            //echo 'hola';
             $nur = $_GET['code'];
             require Kohana::find_file('vendor/fpdf17', 'fpdf');
             require Kohana::find_file('vendor/fpdf17', 'code39');
             $modelo = New Model_Hojasruta();
-            $hojaruta = $modelo->imprimirhre($nur);
+            $hojaruta = $modelo->imprimir($nur);
             $this->autoRender = false;
-            foreach ($hojaruta as $rs) 
-            {
+            foreach ($hojaruta as $rs) {
                 $pdf = new PDF_Code39('P', 'mm', 'Letter');
                 $pdf->SetMargins(10, 10, 5);
                 $pdf->AddPage();
@@ -32,23 +33,37 @@ class Controller_Print extends Controller {
                     $info = pathinfo($src);
                     // continue only if this is a JPEG image
                     if (strtolower($info['extension']) == 'jpg') {
-                        $pdf->Image($image_file, 10, 5, 63, 21, 'jpg', '', '', FALSE, 300, '', FALSE, FALSE, 1);
+                        $pdf->Image($image_file, 10, 3, 63, 24, 'jpg', '', '', FALSE, 300, '', FALSE, FALSE, 1);
                     } else {
-                        $pdf->Image($image_file, 10, 5, 63, 21, 'png', '', '', FALSE, 300, '', FALSE, FALSE, 1);
+                        $pdf->Image($image_file, 10, 3, 63, 24, 'png', '', '', FALSE, 300, '', FALSE, FALSE, 1);
                     }
                 }
                 $pdf->Ln(12);
                 $pdf->SetXY(150, 11);
-                $pdf->SetFont('Arial', '', 14);//hoja de seguimiento    
+                $pdf->SetFont('Arial', '', 14);
+                //hoja de seguimiento    
                 if ($rs->id_tipo != 6):  //tipo 6 = carta externa
-                    $pdf->Cell(60, 6, 'HOJA DE RUTA INTERNA', 1, FALSE, 'C');$pdf->Code39(151, 5, $rs->nur, 0.71, 5);//$pdf->Code39(152,21,$rs->nur,0.71,8);    
+                    $pdf->Cell(60, 6, 'HOJA DE RUTA INTERNA', 1, FALSE, 'C');
+                    $pdf->Code39(151, 5, $rs->nur, 0.71, 5);                    
+                //$pdf->Code39(152,21,$rs->nur,0.71,8);    
                 else:                    
-                    $pdf->Code39(151, 5, $rs->nur, 0.71, 5);$pdf->Cell(60, 6, 'HOJA DE RUTA EXTERNA', 1, FALSE, 'C');
-                endif;//$pdf->Code39(155,21,$rs->nur,0.71,8);//fin codigo barra                                                                     
+                    $pdf->Code39(151, 5, $rs->nur, 0.71, 5);
+                    $pdf->Cell(60, 6, 'HOJA DE RUTA EXTERNA', 1, FALSE, 'C');
+                endif;
+                //$pdf->Code39(155,21,$rs->nur,0.71,8);
+                //fin codigo barra                                                                     
                 $pdf->SetX(145);
-                //NUA//    $pdf->SetFont('Arial', 'B', 10);//$pdf->Cell(65, 5, $rs->sigla, 'TR',FALSE,'C');
-                $pdf->SetXY(150, 17);$pdf->SetFont('Arial', '', 18);$pdf->Cell(60, 9, $rs->nur, 1, FALSE, 'C');             
-                $pdf->SetXY(145, 5);$pdf->Cell(65, 19, '', 0, FALSE, 'C');
+                //NUA
+//    $pdf->SetFont('Arial', 'B', 10);    
+//    $pdf->Cell(65, 5, $rs->sigla, 'TR',FALSE,'C');
+                $pdf->SetXY(150, 17);
+                $pdf->SetFont('Arial', '', 18);
+                $pdf->Cell(60, 9, $rs->nur, 1, FALSE, 'C');
+                
+                $pdf->SetXY(145, 5);
+                $pdf->Cell(65, 19, '', 0, FALSE, 'C');
+
+
                 $pdf->SetXY(10, 29);
                 //columna 1
                 $pdf->SetFont('helvetica', '', 8);
@@ -67,472 +82,258 @@ class Controller_Print extends Controller {
                         $pdf->Cell(115, 10, utf8_decode(strtoupper($rs->entidad)), 'T', 'L');
                     }
                 }
-                $pdf->SetXY(150, 29);$pdf->SetFont('helvetica', '', 8);$pdf->Cell(60, 5, 'CITE ORIGINAL', 'TRL', FALSE, 'C');
-                $pdf->SetXY(150, 34);$pdf->SetFont('helvetica', 'B', 8);$pdf->Cell(60, 5, utf8_decode($rs->cite_original), 'RL', FALSE,'C');
+                $pdf->SetXY(150, 29);
+                $pdf->SetFont('helvetica', '', 8);
+                $pdf->Cell(60, 5, 'CITE ORIGINAL', 'TRL', FALSE, 'C');
+                $pdf->SetXY(150, 34);
+                $pdf->SetFont('helvetica', 'B', 8);
+                $pdf->Cell(60, 5, utf8_decode($rs->cite_original), 'RL', FALSE, 'C');
                 $pdf->Ln();
+
                 //REMITENTE
-                if (strlen(trim($rs->cargo_remitente)) == 0) {
-                    $pdf->SetFont('helvetica', '', 8);                
-                    $pdf->Cell(25, 10, 'REMITENTE:', 'TL', FALSE, 'L');$pdf->Cell(140, 10, utf8_decode($rs->nombre_remitente), 'T', FALSE, 'L');
-                    $pdf->Cell(13, 5, 'FECHA:', 'LT', FALSE, 'L');$pdf->Cell(22, 5, date('d/m/Y', strtotime($rs->fecha_creacion)), 'TR', FALSE, 'L');
-                    $pdf->SetXY(175, 44);
-                    $pdf->Cell(13, 5, 'HORA:', 'L', FALSE, 'L');
-                    $pdf->Cell(22, 5, date('h:i:s A', strtotime($rs->fecha_creacion)), 'R', FALSE, 'L');                                        
-                } else {
-                    $pdf->SetFont('helvetica', '', 8);                
-                    $pdf->Cell(25, 10, 'REMITENTE:', 'TL', FALSE, 'L');$pdf->Cell(140, 6, utf8_decode($rs->nombre_remitente), 'T', FALSE, 'L');
-                    $pdf->Cell(13, 5, 'FECHA:', 'LT', FALSE, 'L');$pdf->Cell(22, 5, date('d/m/Y', strtotime($rs->fecha_creacion)), 'TR', FALSE, 'L');
-                    $pdf->SetXY(175, 44);
-                    $pdf->Cell(13, 5, 'HORA:', 'L', FALSE, 'L');$pdf->Cell(22, 5, date('h:i:s A', strtotime($rs->fecha_creacion)), 'R', FALSE, 'L');
-                    $pdf->SetFont('helvetica', 'B', 8);
-                    $pdf->SetXY(35, 45);$pdf->Cell(140, 2, utf8_decode($rs->cargo_remitente), 0, FALSE, 'L');
-                    //$pdf->SetFont('helvetica', '', 9);
-                }//DETINATARIO
+                $pdf->SetFont('helvetica', '', 8);
+                $pdf->Cell(25, 10, 'REMITENTE:', 'TL', FALSE, 'L');
+                $pdf->Cell(140, 6, utf8_decode($rs->nombre_remitente), 'T', FALSE, 'L');
+
+                $pdf->Cell(13, 5, 'FECHA:', 'LT', FALSE, 'L');
+                $pdf->Cell(22, 5, date('d/m/Y', strtotime($rs->fecha_creacion)), 'TR', FALSE, 'L');
+                $pdf->SetXY(175, 44);
+                $pdf->Cell(13, 5, 'HORA:', 'L', FALSE, 'L');
+                $pdf->Cell(22, 5, date('h:i:s A', strtotime($rs->fecha_creacion)), 'R', FALSE, 'L');
+
+                $pdf->SetFont('helvetica', 'B', 8);
+                $pdf->SetXY(35, 44);
+                $pdf->Cell(140, 3, utf8_decode($rs->cargo_remitente), 0, FALSE, 'L');
+                $pdf->SetFont('helvetica', '', 9);
+                //DETINATARIO
                 if (strlen(trim($rs->cargo_destinatario)) == 0) {
                     $pdf->SetXY(10, 49);
-                    $pdf->SetFont('helvetica', '', 8);$pdf->Cell(25, 10, 'DESTINATARIO:', 'TL', FALSE, 'L');$pdf->MultiCell(175, 10, utf8_decode($rs->nombre_destinatario), 'TR', 'L');
+                    $pdf->SetFont('helvetica', '', 7);
+                    $pdf->Cell(25, 10, 'DESTINATARIO:', 'TL', FALSE, 'L');
+                    $pdf->MultiCell(175, 3, utf8_decode($rs->nombre_destinatario), 'TR', 'L');
                     //$pdf->MultiCell($w, $h, $txt, $border, $align)
                     $pdf->Ln();
-                    //$pdf->SetFont('helvetica', '', 9);
+                    $pdf->SetFont('helvetica', '', 9);
                 } else {
                     $pdf->SetXY(10, 49);
                     $pdf->SetFont('helvetica', '', 8);
-                    $pdf->Cell(25, 10, 'DESTINATARIO:', 'TL', FALSE, 'L');$pdf->Cell(175, 6, utf8_decode($rs->nombre_destinatario), 'TR', FALSE, 'L');
+                    $pdf->Cell(25, 10, 'DESTINATARIO:', 'TL', FALSE, 'L');
+                    $pdf->Cell(175, 6, utf8_decode($rs->nombre_destinatario), 'TR', FALSE, 'L');
                     $pdf->Ln();
-                    //$pdf->SetXY(35, 54);
-                    $pdf->SetFont('helvetica', 'B', 8);$pdf->Cell(25, 7, '', 0, FALSE, 'L');
-                    $pdf->Cell(170, 2, utf8_decode($rs->cargo_destinatario), 0, FALSE, 'L');$pdf->Cell(5, 4, '', 'R', FALSE, 'R');                    
-                }//proceso//fecha
+                    $pdf->SetFont('helvetica', 'B', 8);
+                    $pdf->Cell(25, 3, '', 0, FALSE, 'L');
+                    $pdf->Cell(175, 3, utf8_decode($rs->cargo_destinatario), 'R', FALSE, 'L');
+                    $pdf->SetFont('helvetica', '', 9);
+                }
+                //proceso
+                //fecha
+
                 $pdf->SetXY(10, 59);
-                $pdf->SetFont('helvetica', '', 7);$pdf->Cell(100, 6, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
-                $pdf->SetFont('helvetica', '', 7);$pdf->Cell(100, 6, 'HOJAS : ' . $rs->hojas, 1, FALSE, 'L');
-                
-                $pdf->SetXY(10, 61);$t = 0;$proveidos = $modelo->proveidos($nur);//$contador=$modelo->provcont($nur);
-                
-                $pdf->Ln(4);$pdf->SetFontSize(10);$pdf->SetFillColor(240, 245, 255);
-                $pdf->Cell(33, 7, 'REFERENCIA:', 1, FALSE, 'L', true);//$pdf->Ln(0);//$pdf->Ln(4);
-                    $sqlofdest = $modelo->ofdestinatario($nur);
-                    foreach ($sqlofdest as $sod) {   $oficinad = $sod['sigla'];}
-                    $pdf->SetFontSize(8);//$pdf->SetFillColor(240, 245, 255);
-                    $pdf->Cell(144, 7, 'DESTINATARIO:  '.$oficinad,0, FALSE, 'R', FALSE);               
-                    $pdf->Ln(0);
-                    $pdf->SetFontSize(8);
-
-                    $pdf->Ln(0);
-                    $pa = $pdf->GetY();//proveido
-                    $pdf->SetFontSize(8);//$proveido = $p->proveido;//proveido//if ($pro == 0) {//    $proveido = "";//}
-                    $pdf->SetXY(10, $pa+8);
-                    $pdf->MultiCell(144, 5, utf8_decode($rs->referencia), 'RL', 'L');
-                    $pdf->SetXY(10, $pa);
-                    $pdf->SetFontSize(10);$pdf->Cell(144, 37, '', 'RL', FALSE, 'L');
-                    $pdf->SetTextColor(230, 230, 230);
-                    $pdf->SetFontSize(20);$pdf->Cell(56, 37, 'Sello Recibido', 1, FALSE, 'C');
-                    $pdf->SetTextColor(0);
-                    $pdf->Ln(37);
-                $t++;
-                if ($t <= 7) {
-                    for ($i = 1; $i <= (9 - $t); $i++) {
-                        $pdf->Ln(0);
-                        $yy = $pdf->GetY();
-                        if ($yy > 250) {
-                            // $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);
-                        }                     
-                        $pdf->SetFontSize(10);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(33, 7,' DESTINATARIO:', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);$pdf->Cell(167, 7, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(0);
-                        $pdf->ln();
-                        $pdf->SetFontSize(5);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);                        
-                        $pdf->Ln(0);
-                        $pa = $pdf->GetY();
-                        //proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, utf8_decode(''), 'RL', 'L');
-                        $pdf->SetXY(10, $pa);
-                        if($i>=4)
-                        {   $pdf->SetFontSize(10);$pdf->Cell(144, 37, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 37, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(37);
-                        }else
-                        {   $pdf->SetFontSize(10);$pdf->Cell(144, 40, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 40, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(40);
-                        }                        
-                        $pdf->SetFillColor(240, 245, 255);
-                        $pdf->SetFontSize(10);$pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);$pdf->Cell(124, 5, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);$pdf->Cell(36, 5, '', 1, FALSE, 'L');
-                        $pdf->Ln(5);
-                    }                     
-                }
-
-                for ($i = 9; $i <= 38; $i++) 
-                {       $pdf->Ln(0);
-                        $yy = $pdf->GetY();
-                        if ($yy > 250) {
-                            // $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);
-                        }                     
-                        $pdf->SetFontSize(10);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(33, 7, 'DESTINATARIO:', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);$pdf->Cell(167, 7, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(0);
-                        $pdf->ln();
-                        $pdf->SetFontSize(5);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);                        
-                        $pdf->Ln(0);
-                        $pa = $pdf->GetY();
-                        //proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, '', 'RL', 'L');
-                        $pdf->SetXY(10, $pa);
-                        
-                            $pdf->SetFontSize(10);$pdf->Cell(144, 37, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 37, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(37);
-                                                    
-                        $pdf->SetFillColor(240, 245, 255);
-                        $pdf->SetFontSize(10);$pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);$pdf->Cell(124, 5, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);$pdf->Cell(36, 5, '', 1, FALSE, 'L');
-                        $pdf->Ln(5);
-                }
-
-
-                if (stripos($nur, '/')) {
-                    $nur = explode('/', $nur);
-                    $nur = $nur[0] . $nur[1];
-                }
-                $pdf->Output('Hoja Ruta ' . $nur . '.pdf', 'I');
-            }
-        } else {
-            $this->request->redirect('/error404');
-        }
-    }
-    public function action_hr() {
-        $auth = Auth::instance();
-        if ($auth->logged_in() && isset($_GET['code'])) {
-            $pro = 0;
-            if (isset($_GET['p'])) {$pro = $_GET['p'];}
-            
-            $nur = $_GET['code'];
-            require Kohana::find_file('vendor/fpdf17', 'fpdf');
-            require Kohana::find_file('vendor/fpdf17', 'code39');
-            $modelo = New Model_Hojasruta();
-            $hojaruta = $modelo->imprimir($nur);
-            $this->autoRender = false;
-            foreach ($hojaruta as $rs) 
-            {
-                $pdf = new PDF_Code39('P', 'mm', 'Letter');
-                $pdf->SetMargins(10, 10, 5);
-                $pdf->AddPage();
-                $pdf->SetFont('Arial', 'B', 20);
-                $pdf->SetX(10);
-                $pdf->SetFont('Arial', 'B', 18);
-                //$src = DOCROOT . 'static/logos/' . $rs->logo;
-                $src = DOCROOT . 'media/logos/' . $rs->logo2;
-                if (file_exists($src)) 
-                {   $image_file = $src;
-                    $info = pathinfo($src);// continue only if this is a JPEG image
-                    if (strtolower($info['extension']) == 'jpg') 
-                    {   $pdf->Image($image_file, 10, 3, 63, 24, 'jpg', '', '', FALSE, 300, '', FALSE, FALSE, 1);
-                    }else 
-                    {   $pdf->Image($image_file, 10, 3, 63, 24, 'png', '', '', FALSE, 300, '', FALSE, FALSE, 1);
-                    }
-                }
-                $pdf->Ln(12);
-                $pdf->SetXY(150, 11);
-                $pdf->SetFont('Arial', '', 14);//hoja de seguimiento    
-                if ($rs->id_tipo != 6):  //tipo 6 = carta externa
-                    $pdf->Cell(60, 6, 'HOJA DE RUTA INTERNA', 1, FALSE, 'C');$pdf->Code39(151, 5, $rs->nur, 0.71, 5);//$pdf->Code39(152,21,$rs->nur,0.71,8);
-                else:                    
-                    $pdf->Code39(151, 5, $rs->nur, 0.71, 5);$pdf->Cell(60, 6, 'HOJA DE RUTA EXTERNA', 1, FALSE, 'C');
-                endif;//$pdf->Code39(155,21,$rs->nur,0.71,8);   //fin codigo barra                                                                     
-                $pdf->SetX(145);//NUA   //    $pdf->SetFont('Arial', 'B', 10);//    $pdf->Cell(65, 5, $rs->sigla, 'TR',FALSE,'C');
-                $pdf->SetXY(150, 17);$pdf->SetFont('Arial', '', 18);$pdf->Cell(60, 9, $rs->nur, 1, FALSE, 'C');                
-                $pdf->SetXY(145, 5);$pdf->Cell(65, 19, '', 0, FALSE, 'C');
-                $pdf->SetXY(10, 29);//columna 1
-                $pdf->SetFont('helvetica', '', 8);$pdf->Cell(25, 10, 'PROCEDENCIA:', 'TBL', FALSE, 'L');
-                $pdf->SetFont('helvetica', 'B', 8);
-                if (trim($rs->institucion_remitente) != '') {
-                    if (strlen($rs->institucion_remitente) > 100) {
-                        $pdf->MultiCell(115, 10, utf8_decode(strtoupper($rs->institucion_remitente)), 'T', 'L');
-                    } else {
-                        $pdf->Cell(115, 10, utf8_decode(strtoupper($rs->institucion_remitente)), 'T', 'L');
-                    }
-                } else {
-                    if (strlen($rs->entidad) > 80) {
-                        $pdf->MultiCell(115, 5, utf8_decode(strtoupper($rs->entidad)), 'T', 'L');
-                    } else {
-                        $pdf->Cell(115, 10, utf8_decode(strtoupper($rs->entidad)), 'T', 'L');
-                    }
-                }
-                $pdf->SetXY(150, 29);$pdf->SetFont('helvetica', '', 8);$pdf->Cell(60, 5, 'CITE ORIGINAL', 'TRL', FALSE, 'C');
-                $pdf->SetXY(150, 34);$pdf->SetFont('helvetica', 'B', 8);$pdf->Cell(60, 5, utf8_decode($rs->cite_original), 'RL', FALSE, 'C');
-                $pdf->Ln();//REMITENTE
-                $pdf->SetFont('helvetica', '', 8);$pdf->Cell(25, 10, 'REMITENTE:', 'TL', FALSE, 'L');$pdf->Cell(140, 6, utf8_decode($rs->nombre_remitente), 'T', FALSE, 'L');
-                $pdf->Cell(13, 5, 'FECHA:', 'LT', FALSE, 'L');$pdf->Cell(22, 5, date('d/m/Y', strtotime($rs->fecha_creacion)), 'TR', FALSE, 'L');
-                $pdf->SetXY(175, 44);$pdf->Cell(13, 5, 'HORA:', 'L', FALSE, 'L');$pdf->Cell(22, 5, date('h:i:s A', strtotime($rs->fecha_creacion)), 'R', FALSE, 'L');
-                $pdf->SetXY(35, 44);$pdf->SetFont('helvetica', 'B', 8);$pdf->Cell(140, 3, utf8_decode($rs->cargo_remitente), 0, FALSE, 'L');
-                //$pdf->SetFont('helvetica', '', 9);//DETINATARIO
-                if (strlen(trim($rs->cargo_destinatario)) == 0) {
-                    $pdf->SetXY(10, 49);$pdf->SetFont('helvetica', '', 7);$pdf->Cell(25, 10, 'DESTINATARIO:', 'TL', FALSE, 'L');$pdf->MultiCell(175, 3, utf8_decode($rs->nombre_destinatario), 'TR', 'L');
-                    //$pdf->MultiCell($w, $h, $txt, $border, $align)
-                    $pdf->Ln();
-                    //$pdf->SetFont('helvetica', '', 9);
-                } else {
-                    $pdf->SetXY(10, 49);$pdf->SetFont('helvetica', '', 8);$pdf->Cell(25, 10, 'DESTINATARIO:', 'TL', FALSE, 'L');$pdf->Cell(175, 6, utf8_decode($rs->nombre_destinatario), 'TR', FALSE, 'L');
-                    $pdf->Ln();
-                    $pdf->SetFont('helvetica', 'B', 8);$pdf->Cell(25, 3, '', 0, FALSE, 'L');$pdf->Cell(175, 3, utf8_decode($rs->cargo_destinatario), 'R', FALSE, 'L');
-                    //$pdf->SetFont('helvetica', '', 9);
-                }//proceso//fecha
-                    $pdf->SetXY(10, 59);$pdf->SetFontSize(8);//$pdf->SetFillColor(240, 245, 255);
-                    $pdf->Cell(33, 10, 'REFERENCIA:', 0, false, 'RL', false);
-                    //$pdf->Ln(0);//$pdf->Ln();/*$pdf->SetXY(10, 59);$pdf->SetFontSize(8);$pdf->Cell(25, 10, 'REFERENCIA:', 'LT', FALSE, 'L');*/
+                $pdf->SetFontSize(8);
+                $pdf->Cell(25, 10, 'REFERENCIA:', 'LT', FALSE, 'L');
                 $pdf->SetFont('helvetica', '', 7);
-                if (strlen($rs->referencia) > 121) 
-                {//$pdf->SetFont('helvetica', '', 6); 
-                    if (strlen($rs->referencia) > 240){    $text = substr($rs->referencia, 0, 255) . '..';}
-                    else{   $text = $rs->referencia;}                                        
-                    $pa = $pdf->GetY();//proveido
-                    $pdf->SetFontSize(7);//$proveido = $p->proveido;//proveido//if ($pro == 0) {//    $proveido = "";//}
-                    $pdf->SetXY(35, 60);                    
-                    $pdf->MultiCell(175, 3, utf8_decode($text), false, false);
-                        $pdf->SetXY(10, $pa);                    
-                        $pdf->Cell(200, 10, '', 1, 'LT', 'L');                    
-                    $pdf->Ln(10);
-                }else 
-                {   $pa = $pdf->GetY();//proveido
-                    $pdf->SetFontSize(7);//$proveido = $p->proveido;//proveido//if ($pro == 0) {//    $proveido = "";//}
-                    $pdf->SetXY(35, 60.5);//$pdf->SetXY(0, $pa+1);
-                    $pdf->MultiCell(175, 7, utf8_decode($rs->referencia), false, false);
-                        $pdf->SetXY(10, $pa);//$pdf->SetFontSize(8);$pdf->Cell(5, 10, '', 'L', FALSE, 'L');//$pdf->SetTextColor(230, 230, 230);
-                        $pdf->Cell(200, 10, '', 1, 'LT', 'L');//$pdf->SetTextColor(0);
+                if (strlen($rs->referencia) > 121) {
+                    //$pdf->SetFont('helvetica', '', 6); 
+                    if (strlen($rs->referencia) > 240)
+                        $text = substr($rs->referencia, 0, 240) . '..';
+                    else
+                        $text = $rs->referencia;
+                    $pdf->MultiCell(175, 5, utf8_decode($text), 'TR', 'L');
+                    $pdf->Ln(1);
+                }
+                else {
+                    $pdf->Cell(175, 10, utf8_decode($rs->referencia), 'TR', 'L');
                     $pdf->Ln(10);
                 }
-                //$pdf->SetFont('helvetica', '', 8);
-                //$pdf->Cell(25, 5, 'PROCESO', 'LTB', FALSE, 'l');//$pdf->Cell(47, 5, utf8_decode($rs->proceso), 'TRB', 'L');
+
+                $pdf->SetFont('helvetica', '', 8);
+                //$pdf->Cell(25, 5, 'PROCESO', 'LTB', FALSE, 'l');
+                //$pdf->Cell(47, 5, utf8_decode($rs->proceso), 'TRB', 'L');
                 //MODIFICADO POR QC
-                /*if($rs->id_tipo != 6){   $pdf->Cell(25, 5, 'PROCESO', 'LTB', FALSE, 'l');$pdf->Cell(47, 5, $rs->proceso, 'TRB', 'L');}
-                else{$pdf->Cell(25, 5, '', 'LTB', FALSE, 'l');$pdf->Cell(47, 5, '', 'TRB', 'L');} *///FIN MODIFICADO POR QC
+                if($rs->id_tipo != 6)
+                {
+                    $pdf->Cell(25, 5, 'PROCESO', 'LTB', FALSE, 'l');
+                    $pdf->Cell(47, 5, $rs->proceso, 'TRB', 'L');
+                }
+                else
+                {
+                    $pdf->Cell(25, 5, '', 'LTB', FALSE, 'l');
+                    $pdf->Cell(47, 5, '', 'TRB', 'L');
+                } 
+                //FIN MODIFICADO POR QC
                 $pdf->SetFont('helvetica', '', 7);
-                $pdf->Cell(100, 5, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
-                $pdf->SetFont('helvetica', '', 7);
-                $pdf->Cell(100, 5, 'HOJAS : ' . $rs->hojas, 1, FALSE, 'L');
+                $pdf->Cell(108, 5, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
+                $pdf->SetFont('helvetica', '', 8);
+                $pdf->Cell(20, 5, 'HOJAS : ' . $rs->hojas, 1, FALSE, 'L');
                 $pdf->Ln(10);
                 //primera pagina
                 $pdf->SetXY(10, 70);
-                $t = 0;$j=0;
+                $t = 0;
                 $proveidos = $modelo->proveidos($nur);
+
                 foreach ($proveidos as $p) {
-                    $t++;
-                    $proveido = $p->proveido;//proveido
-                    if ($pro == 0) {    $proveido = "";}
-                    $receptor = utf8_decode($p->nombre_receptor);//proveido 
-                    if ($pro == 0) {    $receptor = "";}
-                    if($t==1)
-                    {
-                        $pdf->Ln(4);
-                        $pdf->SetFontSize(10);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(8, 7, 'A:', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);
-                        
-                            $pdf->Cell(192, 7, $receptor, 1, FALSE, 'L');$pdf->SetFillColor(0);$pdf->ln();
-                            $pdf->SetFontSize(5);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);
-                            $pdf->Ln(0);
-                        
-                        $pdf->Ln(0);
-                        $pa = $pdf->GetY();//proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, utf8_decode($proveido), 'RL', 'L');
-                        $pdf->SetXY(10, $pa);
-                        $pdf->SetFontSize(10);$pdf->Cell(144, 27, '', 'RL', FALSE, 'L');
-                        $pdf->SetTextColor(230, 230, 230);
-                        $pdf->SetFontSize(20);$pdf->Cell(56, 27, 'Sello Recibido', 1, FALSE, 'C');
-                        $pdf->SetTextColor(0);
-                        $pdf->Ln(27);
-                        $pdf->SetFillColor(240, 245, 255);
-                        $yy = $pdf->GetY();
-                        
-                    }else
-                    {   /*$j++;
-                        $pdf->Ln(0);
-                        $yy = $pdf->GetY();
-                        if ($yy > 250) {
-                            // $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);
-                        }                     
-                        $pdf->SetFontSize(10);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(33, 7, 'DESTINATARIO '.$j.':', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);$pdf->Cell(167, 7, $receptor, 1, FALSE, 'L');
-                        $pdf->SetFillColor(0);
-                        $pdf->ln();
-                        $pdf->SetFontSize(5);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);                        
-                        $pdf->Ln(0);
-                        $pa = $pdf->GetY();
-                        //proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, utf8_decode($proveido), 'RL', 'L');
-                        $pdf->SetXY(10, $pa);
-                        if($j>=4)
-                        {   $pdf->SetFontSize(10);$pdf->Cell(144, 35, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 35, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(35);
-                        }else
-                        {   $pdf->SetFontSize(10);$pdf->Cell(144, 38, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 38, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(38);
-                        }                            
-                        $pdf->SetFillColor(240, 245, 255);
-                        $pdf->SetFontSize(10);$pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);$pdf->Cell(124, 5, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);$pdf->Cell(36, 5, '', 1, FALSE, 'L');
-                        $pdf->Ln(5);*/
+
+
+                    $pdf->Ln(4);
+                    $pdf->SetFontSize(10);
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(8, 7, 'A:', 1, FALSE, 'L', true);
+                    $pdf->SetFillColor(0);
+                    $receptor = utf8_decode($p->nombre_receptor);
+                    //proveido
+                    if ($pro == 0) {
+                        $receptor = "";
                     }
-                    if ($yy > 250) {// $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 9);
-                        }//si la cantidad de derivaciones es igual a 7 o superior
-                    /*if ($j == 8) 
-                    {   $j = 0;
-                    } */
+
+                    $pdf->Cell(192, 7, $receptor, 1, FALSE, 'L');
+                    $pdf->SetFillColor(0);
+                    $pdf->ln();
+                    $pdf->SetFontSize(5);
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(200, 1, '', 'RL', FALSE);
+                    $pdf->Ln(1);
+                    $acciones = array(1 => utf8_decode('FAVOR SU ATENCIÓN'), 2 => 'ELABORAR INFORME', 3 => 'ELABORAR RESPUESTA', 4 => utf8_decode('PARA SU CONSIDERACIÓN'),
+                        5 => 'PARA SU CONOCIMIENTO', 6 => 'PARA VoBo', 7 => 'ARCHIVAR', '8' => 'OTROS');
+                    $anchos = array(1 => 21, 2 => 20, 3 => 23, 4 => 25,
+                        5 => 24, 6 => 15, 7 => 17, 8 => 16);
+                    for ($j = 1; $j < 9; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
+                            $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
+                    $pdf->Ln();
+                    $pdf->Cell(200, 1, '', 'BRL', FALSE);
+                    $pdf->Ln(1);
+                    $pa = $pdf->GetY();
+                    //proveido
+                    $pdf->SetFontSize(8);
+                    $proveido = utf8_decode($p->proveido);
+                    //proveido
+                    if ($pro == 0) {
+                        $proveido = "";
+                    }
+
+                    $pdf->MultiCell(144, 5, $proveido, 'RL', 'L');
+                    $pdf->SetXY(10, $pa);
+                    $pdf->SetFontSize(10);
+                    $pdf->Cell(144, 39, '', 'RL', FALSE, 'L');
+                    $pdf->SetTextColor(230, 230, 230);
+                    $pdf->SetFontSize(20);
+                    $pdf->Cell(56, 39, 'Sello Recibido', 1, FALSE, 'C');
+                    $pdf->SetTextColor(0);
+                    $pdf->Ln(39);
+                    $pdf->SetFillColor(240, 245, 255);
+
+                    $pdf->SetFontSize(10);
+                    $pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);
+                    $pdf->Cell(124, 5, '', 1, FALSE, 'L');
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);
+                    $pdf->Cell(36, 5, '', 1, FALSE, 'L');
+                    if ($t < 4) {
+                        $pdf->Ln(6);
+                    } else {
+                        $pdf->Ln(5);
+                    }
+
+
+                    $yy = $pdf->GetY();
+                    if ($yy > 250) {
+                        // $y = $pdf->GetY();
+                        // $pdf->SetXY(20, 20);
+                        //$pdf->SetXY(10, 4);
+                        $pdf->SetFontSize(9);
+                        $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
+
+                        $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
+                        $pdf->SetXY(10, 9);
+                    }
+                    //si la cantidad de derivaciones es igual a 7 o superior
+                    if ($t == 7) {
+                        $t = 0;
+                    } else {
+                        $t++;
+                    }
                 }
-                if ($j <= 8) {
-                    for ($i = $j+1; $i <= 8; $i++) {
-                        $pdf->Ln(0);
-                        $yy = $pdf->GetY();
-                        if ($yy > 250) {
-                            // $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);
-                        }                     
-                        $pdf->SetFontSize(10);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(33, 7, 'DESTINATARIO:', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);$pdf->Cell(167, 7, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(0);
-                        $pdf->ln();
-                        $pdf->SetFontSize(5);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);                        
-                        $pdf->Ln(0);
-                        $pa = $pdf->GetY();
-                        //proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, '', 'RL', 'L');
-                        $pdf->SetXY(10, $pa);
-                        if($i>=4)
-                        {	$pdf->SetFontSize(10);$pdf->Cell(144, 37, '', 'RL', FALSE, 'L');
-	                        $pdf->SetTextColor(230, 230, 230);
-	                        $pdf->SetFontSize(20);$pdf->Cell(56, 37, 'Sello Recibido', 1, FALSE, 'C');
-	                        $pdf->SetTextColor(0);
-	                        $pdf->Ln(37);
-                        }else
-                        { 	$pdf->SetFontSize(10);$pdf->Cell(144, 38, '', 'RL', FALSE, 'L');
-	                        $pdf->SetTextColor(230, 230, 230);
-	                        $pdf->SetFontSize(20);$pdf->Cell(56, 38, 'Sello Recibido', 1, FALSE, 'C');
-	                        $pdf->SetTextColor(0);
-	                        $pdf->Ln(38);
-                        }                            
-                        $pdf->SetFillColor(240, 245, 255);
-                        $pdf->SetFontSize(10);$pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);$pdf->Cell(124, 5, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);$pdf->Cell(36, 5, '', 1, FALSE, 'L');
+                if ($t <= 7) {
+                    for ($i = 1; $i <= (7 - $t); $i++) {
                         $pdf->Ln(5);
-                    }                     
-                }$k=$j+$i;
-
-                /*for ($i = 9; $i <= 38; $i++) 
-                {       $pdf->Ln(0);
                         $yy = $pdf->GetY();
                         if ($yy > 250) {
-                            // $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
+                            // $y = $pdf->GetY();
+                            // $pdf->SetXY(20, 20);
+                            //$pdf->SetXY(10, 4);
                             $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
+                            $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
                             $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
                             $pdf->SetXY(10, 13);
-                        }                     
-                        $pdf->SetFontSize(10);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(33, 7, 'DESTINATARIO:', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);$pdf->Cell(167, 7, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(0);
-                        $pdf->ln();
-                        $pdf->SetFontSize(5);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);                        
-                        $pdf->Ln(0);
-                        $pa = $pdf->GetY();
-                        //proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, '', 'RL', 'L');
-                        $pdf->SetXY(10, $pa);
+                        }
                         
-                            $pdf->SetFontSize(10);$pdf->Cell(144, 37, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 37, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(37);
-                                                    
-                        $pdf->SetFillColor(240, 245, 255);
-                        $pdf->SetFontSize(10);$pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);$pdf->Cell(124, 5, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);$pdf->Cell(36, 5, '', 1, FALSE, 'L');
-                        $pdf->Ln(5);
-                }*/
-
-
-
-                /*if ($k <= 13) 
-                {
-                    for ($i = $k+1; $i <= (8 - $k); $i++) 
-                    {   $pdf->Ln(0);
-                        $yy = $pdf->GetY();
-                        if ($yy > 250) {
-                            // $y = $pdf->GetY();// $pdf->SetXY(20, 20);//$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);
-                        }                     
+                        
+                        
                         $pdf->SetFontSize(10);
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(33, 7, 'DESTINATARIO:', 1, FALSE, 'L', true);
-                        $pdf->SetFillColor(0);$pdf->Cell(167, 7, '', 1, FALSE, 'L');
+                        $pdf->SetFillColor(240, 245, 255);
+                        $pdf->Cell(8, 7, 'A:', 1, FALSE, 'L', true);
+                        $pdf->SetFillColor(0);
+                        $pdf->Cell(192, 7, '', 1, FALSE, 'L');
                         $pdf->SetFillColor(0);
                         $pdf->ln();
-                        $pdf->SetFontSize(5);$pdf->SetFillColor(240, 245, 255);$pdf->Cell(200, 1, '', 'RL', FALSE);                        
-                        $pdf->Ln(0);
+                        $pdf->SetFontSize(5);
+                        $pdf->SetFillColor(240, 245, 255);
+                        $pdf->Cell(200, 1, '', 'RL', FALSE);
+                        $pdf->Ln(1);
+                        $acciones = array(1 => utf8_decode('FAVOR SU ATENCIÓN'), 2 => 'ELABORAR INFORME', 3 => 'ELABORAR RESPUESTA', 4 => utf8_decode('PARA SU CONSIDERACIÓN'),
+                        5 => 'PARA SU CONOCIMIENTO', 6 => 'PARA VoBo', 7 => 'ARCHIVAR', '8' => 'OTROS');
+                        $anchos = array(1 => 21, 2 => 20, 3 => 23, 4 => 25,
+                            5 => 24, 6 => 15, 7 => 17, 8 => 16);
+                        for ($j = 1; $j < 9; $j++) {
+                            $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+
+                            //ESPACIO
+                            $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                        }
+                        $pdf->Ln();
+                        $pdf->Cell(200, 1, '', 'BRL', FALSE);
+                        $pdf->Ln(1);
                         $pa = $pdf->GetY();
                         //proveido
-                        $pdf->SetFontSize(8);$pdf->MultiCell(144, 5, '', 'RL', 'L');
+                        $pdf->SetFontSize(8);
+                        $pdf->MultiCell(144, 5, utf8_decode(''), 'RL', 'L');
                         $pdf->SetXY(10, $pa);
-                        //if($i>=4)
-                        //{  
-                            $pdf->SetFontSize(10);$pdf->Cell(144, 36, '', 'RL', FALSE, 'L');
-                            $pdf->SetTextColor(230, 230, 230);
-                            $pdf->SetFontSize(20);$pdf->Cell(56, 36, 'Sello Recibido', 1, FALSE, 'C');
-                            $pdf->SetTextColor(0);
-                            $pdf->Ln(36);
-                        //}                            
+                        $pdf->SetFontSize(10);
+                        $pdf->Cell(144, 38, '', 'RL', FALSE, 'L');
+                        $pdf->SetTextColor(230, 230, 230);
+                        $pdf->SetFontSize(20);
+                        $pdf->Cell(56, 38, 'Sello Recibido', 1, FALSE, 'C');
+                        $pdf->SetTextColor(0);
+                        $pdf->Ln(38);
                         $pdf->SetFillColor(240, 245, 255);
-                        $pdf->SetFontSize(10);$pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);$pdf->Cell(124, 5, '', 1, FALSE, 'L');
-                        $pdf->SetFillColor(240, 245, 255);$pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);$pdf->Cell(36, 5, '', 1, FALSE, 'L');
-                        $pdf->Ln(5);
-                    }                     
-                }*/
 
-                
+                        $pdf->SetFontSize(10);
+                        $pdf->Cell(20, 5, 'Adjunto:', 1, FALSE, 'L', true);
+                        $pdf->Cell(124, 5, '', 1, FALSE, 'L');
+                        $pdf->SetFillColor(240, 245, 255);
+                        $pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);
+                        $pdf->Cell(36, 5, '', 1, FALSE, 'L');
+                        $pdf->Ln(4);
+
+
+                        
+                    }
+                }
+
+
+                /*
                   //hoja extra
-                  /*for ($i = 1; $i <= 4; $i++) {
-                  //$pdf->Ln(0);
-                        //$yy = $pdf->GetY();
-                  $pdf->Ln(4);                         
+                  for ($i = 1; $i <= 4; $i++) {
+                  $pdf->Ln(4);
                   $pdf->SetFontSize(10);
                   $pdf->SetFillColor(240, 245, 255);
                   $pdf->Cell(8, 7, 'A:', 1, FALSE, 'L', true);
@@ -580,11 +381,11 @@ class Controller_Print extends Controller {
                   $pdf->Cell(20, 5, 'Hora:', 1, FALSE, 'L', true);
                   $pdf->Cell(36, 5, '', 1, FALSE, 'L');
                   $pdf->Ln();
-                  }*/
+                  }
 
 
 
-                 
+                 */
                 // $y = $pdf->GetY();
                 // $pdf->SetXY(171, $y + 1);
                 // $pdf->SetFontSize(10);
