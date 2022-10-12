@@ -249,15 +249,14 @@ class Controller_Print extends Controller {
 
 
                     $yy = $pdf->GetY();
-                    if ($yy > 250) {
+                    if ($yy > 250 && $t < 6) {
                         // $y = $pdf->GetY();
                         // $pdf->SetXY(20, 20);
                         //$pdf->SetXY(10, 4);
                         $pdf->SetFontSize(9);
-                        $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
-
-                        $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                        $pdf->SetXY(10, 9);
+                            $pdf->Cell(100, 2, "CITE: " . utf8_decode($rs->cite_original), 0, FALSE, 'L');
+                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
+                            $pdf->SetXY(10, 9);
                     }
                     //si la cantidad de derivaciones es igual a 7 o superior
                     if ($t == 7) {
