@@ -93,7 +93,7 @@ class Controller_Print extends Controller {
                 //REMITENTE
                 $pdf->SetFont('helvetica', '', 8);
                 $pdf->Cell(25, 10, 'REMITENTE:', 'TL', FALSE, 'L');
-                $pdf->Cell(140, 6, utf8_decode($rs->nombre_remitente), 'T', FALSE, 'L');
+                $pdf->Cell(140, 4, utf8_decode($rs->nombre_remitente), 'T', FALSE, 'L');
 
                 $pdf->Cell(13, 5, 'FECHA:', 'LT', FALSE, 'L');
                 $pdf->Cell(22, 5, date('d/m/Y', strtotime($rs->fecha_creacion)), 'TR', FALSE, 'L');
@@ -102,8 +102,8 @@ class Controller_Print extends Controller {
                 $pdf->Cell(22, 5, date('h:i:s A', strtotime($rs->fecha_creacion)), 'R', FALSE, 'L');
 
                 $pdf->SetFont('helvetica', 'B', 8);
-                $pdf->SetXY(35, 44);
-                $pdf->Cell(140, 3, utf8_decode($rs->cargo_remitente), 0, FALSE, 'L');
+                $pdf->SetXY(35, 43);
+                $pdf->MultiCell(140, 2, utf8_decode($rs->cargo_remitente), 'br', 'L');
                 $pdf->SetFont('helvetica', '', 9);
                 //DETINATARIO
                 if (strlen(trim($rs->cargo_destinatario)) == 0) {
