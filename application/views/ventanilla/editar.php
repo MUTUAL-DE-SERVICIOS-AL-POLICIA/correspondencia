@@ -72,10 +72,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <?php
-                                echo Form::input('submit', 'Modificar', array('type' => 'submit', 'class' => 'btn btn-sm btn-primary-dark', 'id' => 'crear'));
+                                echo Form::input('submit', 'Guardar cambios', array('type' => 'submit', 'class' => 'btn btn-sm btn-primary-dark', 'id' => 'crear'));
                                 ?>    
-                                <?php/*<a href="/print.php/?code=<?php echo $documento->nur; ?>" class="btn btn-sm btn-accent-dark" title="Imprimir hoja de ruta" ><i class="fa fa-print"></i> Hoja de Ruta</a>
-                                <a href="/print/hr/?code=<?php echo $documento->nur; ?>&p=1" target="_blank" class="btn btn-sm btn-accent-dark"><i class="fa fa-print"></i> Imprimir Hoja de Ruta</a>*/?>
+                                <!--<a href="/print.php/?code=<?php echo $documento->nur; ?>" class="btn btn-sm btn-accent-dark" title="Imprimir hoja de ruta" ><i class="fa fa-print"></i> Hoja de Ruta</a>-->
+                                <a href="/print/hre/?code=<?php echo $documento->nur; ?>&p=1" target="_blank" class="btn btn-sm btn-accent-dark"><i class="fa fa-print"></i> Imprimir Hoja de Ruta</a>
                                 <a href="/route/deriv/?hr=<?php echo $documento->nur; ?>" class="btn btn-sm btn-default" title="Derivar a partir del documento, si ya esta derivado muestra el seguimiento" >
                                 Derivar</a>
 

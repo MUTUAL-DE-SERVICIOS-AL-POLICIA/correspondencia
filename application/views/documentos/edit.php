@@ -129,7 +129,8 @@
                 <div class="card-head  ">
                     <header><i class="fa fa-pencil"></i> <?php echo $documento->nur ?> | <span class="text-primary"> <?php // echo $tipo->tipo    ?><?php echo $documento->codigo ?></span></header>
                     <div class="tools">
-                        <input type="submit" name="documento" value="Editar" class="btn btn-sm btn-primary-dark" />   
+                        <!--<input type="submit" name="documento" value="Editar" class="btn btn-sm btn-primary-dark" />   -->
+                        <input type="submit" name="documento" value="Guardar Cambios" class="btn btn-sm btn-primary-dark" />   
                         <?php if ($documento->estado == 1): ?> 
                             <a href="/route/trace/?hr=<?php echo $documento->nur; ?>" class="btn btn-sm btn-success" title="Ver seguimiento" ><i class="md md-verified-user"></i> Ver</a>      
                         <?php else: ?>
