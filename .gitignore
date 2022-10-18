@@ -1,0 +1,3 @@
+ldap.json
+/application/config/database
+/application/logs/*

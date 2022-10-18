@@ -1,0 +1,13 @@
+{
+	"LDAP_AUTHENTICATION": false,
+	"LDAP_HOST": "192.168.2.99",
+	"LDAP_PORT": "3890",
+	"LDAP_SSL": false,
+	"LDAP_ADMIN_PREFIX": "cn",
+	"LDAP_ADMIN_USERNAME": "admin",
+	"LDAP_ADMIN_PASSWORD": "admin",
+	"LDAP_ACCOUNT_PREFIX": "uid",
+	"LDAP_ACCOUNT_SUFFIX": "ou=usuarios",
+	"LDAP_BASEDN": "dc=muserpol,dc=gob,dc=bo",
+	"LDAP_TIMEOUT": 6
+}
