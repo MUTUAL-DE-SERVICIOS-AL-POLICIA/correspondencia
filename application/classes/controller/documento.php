@@ -92,6 +92,9 @@ class Controller_Documento extends Controller_DefaultTemplate {
                 $abre = $oOficina->tipo($tipo->id);
                 $entidad = ORM::factory('entidades')->where('id', '=', $oficina->id_entidad)->find();
                 //variables para el cite
+                //sigla oficina superior
+                $sup = $oOficina->sigla($oficina->padre);
+                //
                 $ofi = $oOficina->sigla($oficina_id);
                 $cor = $correlativo;
                 $ent = $entidad->sigla;

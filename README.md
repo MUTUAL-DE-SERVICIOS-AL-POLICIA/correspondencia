@@ -32,6 +32,12 @@ service apache2 restart
 * 8. Verificar dentro el contenedor que el directorio /var/www/html/ este direccionado al codigo fuente del sistema
 * 9. cambiar la configuracion del archivo application/config/database.php con las credenciales de la base de datos
 * 10. cambiar las configuraciones del archivo ldap.json con las credenciales de conexion LDAP o cambiar su estado a false
+* 11. Verificar que la version de php contenga el driver ldap, caso contrario instalar
+```sh
+php -m
+sudo apt-get install -y php5-ldap
+```
+
 
 # Despliegue de la base de datos con Docker
 
