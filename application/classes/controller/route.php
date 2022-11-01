@@ -176,6 +176,7 @@ class Controller_route extends Controller_DefaultTemplate {
                 $abre = $oOficina->tipo($tipo->id);
                 $entidad = ORM::factory('entidades')->where('id', '=', $oficina->id_entidad)->find();
                 //variables para el cite
+                $sup = $oOficina->sigla($oficina->padre);
                 $ofi = $oficina->sigla;
                 $cor = $correlativo;
                 $ent = $entidad->sigla;
