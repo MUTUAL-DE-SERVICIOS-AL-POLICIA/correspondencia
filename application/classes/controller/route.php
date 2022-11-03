@@ -206,6 +206,7 @@ class Controller_route extends Controller_DefaultTemplate {
                 $documento->nombre_remitente = $this->user->nombre;
                 $documento->cargo_remitente = $this->user->cargo;
                 $documento->fecha_creacion = date('Y-m-d H:i:s');
+                $documento->mosca_remitente = $this->user->mosca;
                 $documento->nur = $nur;
                 $documento->id_seguimiento = $id_seg;
                 $documento->original = 0; //important !!                

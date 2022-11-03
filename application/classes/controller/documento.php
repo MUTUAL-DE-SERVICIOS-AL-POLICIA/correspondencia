@@ -399,7 +399,7 @@ class Controller_Documento extends Controller_DefaultTemplate {
             $this->template->descripcion = 'Editar documento, subir archivos digitales y derivacion directa';
             //$this->template->scripts = array('media/redactor/redactor.min.js', 'media/redactor/langs/es.js');
             //$this->template->styles = array('media/redactor/css/redactor.css' => 'all', 'media/css/tablas.css' => 'screen');
-            $this->template->scripts = array('static/js/libs/select2/select2.min.js','static/js/libs/spin.js/spin.min.j','static/js/eModal.min.js');
+            $this->template->scripts = array('static/js/libs/select2/select2.min.js','static/js/libs/spin.js/spin.min.js','static/js/eModal.min.js');
             $this->template->styles = array('static/css/theme-1/libs/select2/select2.css' => 'all');
 
             $this->template->content = View::factory('documentos/edit')

@@ -24,6 +24,7 @@ class Controller_plantilla extends Controller {
 
 
         $documento = ORM::factory('documentos', $id);
+        $oficina = ORM::factory('oficinas', $documento->id_oficina);
         $tipos = ORM::factory('tipos', $documento->id_tipo);
         if ($tipos->loaded()) {
             $sql = "SELECT d.id, d.cite_original,d.nombre_remitente,o.oficina,d.cargo_remitente,d.referencia,d.nur,p.lugar,p.dias,p.fecha_salida,p.fecha_retorno,p.pasaje,p.viatico,t.tipo_viaje,m.medio_transporte FROM documentos d 
@@ -36,7 +37,6 @@ class Controller_plantilla extends Controller {
             $data = array();
             $i = 1;
             $marca = array(0 => '', 1 => 'X');
-
             $data[] = array(
                 //'i'=>$i,
                 'destinatario' => utf8_decode($documento->nombre_destinatario),
@@ -54,7 +54,7 @@ class Controller_plantilla extends Controller {
                 'hr' => $documento->nur,
                 'adjunto' => $documento->adjuntos,
                 'nur' => $documento->nur,
-                
+                'oficina' => $oficina->sigla,
                 'titulo' => utf8_decode($documento->titulo),
                 'institucion' => utf8_decode($documento->institucion_destinatario),
             );
@@ -129,7 +129,7 @@ class Controller_plantilla extends Controller {
 
 
         $documento = ORM::factory('documentos', $id);
-
+        $oficina = ORM::factory('oficinas', $documento->id_oficina);
         $sql = "SELECT d.id, d.cite_original,d.nombre_remitente,o.oficina,d.cargo_remitente,d.referencia,d.nur,p.lugar,p.dias,p.fecha_salida,p.fecha_retorno,p.pasaje,p.viatico,t.tipo_viaje,m.medio_transporte FROM documentos d 
         INNER JOIN users u ON u.id=d.id_user
         INNER JOIN oficinas o ON o.id=d.id_oficina
@@ -157,6 +157,7 @@ class Controller_plantilla extends Controller {
             'hr' => $documento->nur,
             'adjunto' => $documento->adjuntos,
             'nur' => $documento->nur,
+            'oficina' => $oficina->sigla,
         );
         $fecha = date('d/m/Y');
         $cargod = date('d/m/Y');
