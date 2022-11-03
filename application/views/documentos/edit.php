@@ -69,7 +69,7 @@
          return false;
          }).filter(':first').click();
          */
-        $('#descripcion').redactor({lang: 'es', css: 'docstyle.css'});
+        //$('#descripcion').redactor({lang: 'es', css: 'docstyle.css'});
         //incluir destinatario
         $('a.destino').click(function () {
             var nombre = $(this).attr('nombre');
