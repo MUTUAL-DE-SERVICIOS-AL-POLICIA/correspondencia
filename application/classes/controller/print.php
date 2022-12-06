@@ -1026,11 +1026,11 @@ class Controller_Print extends Controller {
                     $pdf->SetFillColor(240, 245, 255);
                     $pdf->Cell(200, 1, '', 'RL', FALSE);
                     $pdf->Ln(1);
-                    $acciones = array(1 => utf8_decode('FAVOR SU ATENCIÓN'), 2 => 'ELABORAR INFORME', 3 => 'ELABORAR RESPUESTA', 4 => utf8_decode('PARA SU CONSIDERACIÓN'),
-                        5 => 'PARA SU CONOCIMIENTO', 6 => 'PARA VoBo', 7 => 'ARCHIVAR', '8' => 'OTROS');
-                    $anchos = array(1 => 21, 2 => 20, 3 => 23, 4 => 25,
-                        5 => 24, 6 => 15, 7 => 17, 8 => 16);
-                    for ($j = 1; $j < 9; $j++) {
+                    $acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
+                        5 => utf8_decode('COORDINAR REUNIÓN'), 6 => 'SOLICITO SU AUTORIZACION', 7 => 'ARCHIVO');
+                        $anchos = array(1 => 15, 2 => 35, 3 => 17, 4 => 27,
+                        5 => 26, 6 => 32, 7 => 14, 8 => 16);
+                    for ($j = 1; $j < 8; $j++) {
                         $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
                         if ($p->accion == $j) {
                             $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
@@ -1126,11 +1126,11 @@ class Controller_Print extends Controller {
                         $pdf->SetFillColor(240, 245, 255);
                         $pdf->Cell(200, 1, '', 'RL', FALSE);
                         $pdf->Ln(1);
-                        $acciones = array(1 => utf8_decode('FAVOR SU ATENCIÓN'), 2 => 'ELABORAR INFORME', 3 => 'ELABORAR RESPUESTA', 4 => utf8_decode('PARA SU CONSIDERACIÓN'),
-                        5 => 'PARA SU CONOCIMIENTO', 6 => 'PARA VoBo', 7 => 'ARCHIVAR', '8' => 'OTROS');
-                        $anchos = array(1 => 21, 2 => 20, 3 => 23, 4 => 25,
-                            5 => 24, 6 => 15, 7 => 17, 8 => 16);
-                        for ($j = 1; $j < 9; $j++) {
+                        $acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
+                        5 => utf8_decode('COORDINAR REUNIÓN'), 6 => 'SOLICITO SU AUTORIZACION', 7 => 'ARCHIVO');
+                        $anchos = array(1 => 15, 2 => 35, 3 => 17, 4 => 27,
+                        5 => 26, 6 => 32, 7 => 14);
+                        for ($j = 1; $j < 8; $j++) {
                             $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
 
                             $pdf->Cell(4, 5, '', 1, FALSE, 'L');
