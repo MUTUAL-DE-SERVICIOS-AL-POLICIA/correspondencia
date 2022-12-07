@@ -138,11 +138,11 @@ class Controller_Print extends Controller {
                         $text = substr($rs->referencia, 0, 240) . '..';
                     else
                         $text = $rs->referencia;
-                    $pdf->MultiCell(175, 5, utf8_decode($text), 'TR', 'L');
+                    $pdf->MultiCell(175, 3, utf8_decode($text), 'TR', 'J');
                     $pdf->Ln(1);
                 }
                 else {
-                    $pdf->Cell(175, 10, utf8_decode($rs->referencia), 'TR', 'L');
+                    $pdf->Cell(175, 3, utf8_decode($rs->referencia), 'TR', 'L');
                     $pdf->Ln(10);
                 }
 
