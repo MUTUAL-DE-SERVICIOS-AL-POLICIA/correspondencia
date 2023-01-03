@@ -138,11 +138,11 @@ class Controller_Print extends Controller {
                         $text = substr($rs->referencia, 0, 240) . '..';
                     else
                         $text = $rs->referencia;
-                    $pdf->MultiCell(175, 3, utf8_decode($text), 'TR', 'J');
+                    $pdf->MultiCell(175, 5, utf8_decode($text), 'TR', 'J');
                     $pdf->Ln(1);
                 }
                 else {
-                    $pdf->Cell(175, 3, utf8_decode($rs->referencia), 'TR', 'L');
+                    $pdf->Cell(175, 10, utf8_decode($rs->referencia), 'TR', 'L');
                     $pdf->Ln(10);
                 }
 
@@ -192,11 +192,42 @@ class Controller_Print extends Controller {
                     $pdf->SetFillColor(240, 245, 255);
                     $pdf->Cell(200, 1, '', 'RL', FALSE);
                     $pdf->Ln(1);
-                    $acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
+                    /*$acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
                         5 => utf8_decode('COORDINAR REUNIÓN'), 6 => 'SOLICITO SU AUTORIZACION', 7 => 'ARCHIVO');
                     $anchos = array(1 => 15, 2 => 35, 3 => 17, 4 => 27,
                         5 => 26, 6 => 32, 7 => 14, 8 => 16);
                     for ($j = 1; $j < 8; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
+                            $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }*/
+                    $acciones = array(1 => utf8_decode('PROCESAR SEGUN NORMATIVA VIGENTE'), 2 => utf8_decode('URGENTE'), 3 => utf8_decode('ELABORAR INFORME'), 4 => 'ELABORAR CONTRATO', 5 => utf8_decode('SOLICITO SU AUTORIZACIÓN'), 6 => utf8_decode('PARA NOTIFICAR'), 7 => utf8_decode('COORDINAR REUNIÓN'),
+                                        8 => 'REALIZAR SEGUIMIENTO Y CONTROL', 9 => 'DAR CURSO', 10 => utf8_decode('ELABORAR RESOLUCIÓN'), 11 => utf8_decode('ELABORAR RESPUESTA'), 12 => utf8_decode('PARA SU CONSIDERACIÓN'), 13 => 'PROCESAR PAGO', 14 => utf8_decode('ARCHIVO'));
+                    $anchos = array(1 => 38, 2 => 13, 3 => 23, 4 => 23, 5 => 27, 6 => 19, 7 => 23, 
+                                    8 => 38, 9 => 13, 10 => 23, 11 => 23, 12 => 27, 13 => 19, 14 => 23);
+                    //primera fila
+                    for ($j = 1; $j <= 7; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
+                            $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
+                    //segunda fila
+                    $pdf->ln();
+                    $pdf->SetFontSize(5);
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(200, 1, '', 'RL', FALSE);
+                    $pdf->Ln(1);
+                    for ($j = 8; $j <= 14; $j++) {
                         $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
                         if ($p->accion == $j) {
                             $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
@@ -218,8 +249,8 @@ class Controller_Print extends Controller {
                         $proveido = "";
                     }
 
-                    $pdf->MultiCell(144, 5, $proveido, 'RL', 'L');
-                    $pdf->MultiCell(130, 5, '
+                    $pdf->MultiCell(144, 2, $proveido, 'RL', 'L');
+                    $pdf->MultiCell(130, 4, '
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
@@ -227,12 +258,12 @@ class Controller_Print extends Controller {
                     FIRMA', '', 'C');
                     $pdf->SetXY(10, $pa);
                     $pdf->SetFontSize(10);
-                    $pdf->Cell(144, 39, '', 'RL', FALSE, 'L');
+                    $pdf->Cell(144, 30, '', 'RL', FALSE, 'L');
                     $pdf->SetTextColor(230, 230, 230);
                     $pdf->SetFontSize(20);
-                    $pdf->Cell(56, 39, 'Sello Recibido', 1, FALSE, 'C');
+                    $pdf->Cell(56, 30, 'Sello Recibido', 1, FALSE, 'C');
                     $pdf->SetTextColor(0);
-                    $pdf->Ln(39);
+                    $pdf->Ln(30);
                     $pdf->SetFillColor(240, 245, 255);
 
                     $pdf->SetFontSize(10);
@@ -265,7 +296,7 @@ class Controller_Print extends Controller {
                         $t++;
                     }
                 }
-                if ($t <= 7) {
+                if ($t <= 6) {
                     for ($i = 1; $i <= (7 - $t); $i++) {
                         $pdf->Ln(5);
                         $yy = $pdf->GetY();
@@ -292,26 +323,56 @@ class Controller_Print extends Controller {
                         $pdf->SetFillColor(240, 245, 255);
                         $pdf->Cell(200, 1, '', 'RL', FALSE);
                         $pdf->Ln(1);
-                        $acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
-                        5 => utf8_decode('COORDINAR REUNIÓN'), 6 => 'SOLICITO SU AUTORIZACION', 7 => 'ARCHIVO');
-                        $anchos = array(1 => 15, 2 => 35, 3 => 17, 4 => 27,
-                        5 => 26, 6 => 32, 7 => 14, 8 => 16);
-                        for ($j = 1; $j < 8; $j++) {
-                            $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
-
+                        /*$acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('DAR CURSO'), 3 => 'PROCESAR SEGUN NORMATIVA VIGENTE', 4 => 'REALIZAR SEGUIMIENTO Y CONTROL',
+                        5 => utf8_decode('SOLICITO SU ATORIZACIÓN'), 6 => 'ELABORAR INFORME', 7 => utf8_decode('ELABORAR RESOLUCIÓN'), 8 => 'ELABORAR CONTRATO', 9 => 'ELABORAR RESPUESTA', 10 => utf8_decode('PARA SU CONSIDERACIÓN'),
+                    11 => 'PARA NOTIFICAR', 12 => 'PROCESAR PAGO', 13 => utf8_decode('COORDINAR REUNIÓN'), 14 => 'ARCHIVO');
+                    $anchos = array(1 => 11, 2 => 12, 3 => 39, 4 => 35,
+                        5 => 25, 6 => 20, 7 => 24, 8 => 25, 9 => 26, 10 => 30, 11 => 20, 12 => 22, 13 => 25, 14 => 18);*/
+                        $acciones = array(1 => utf8_decode('PROCESAR SEGUN NORMATIVA VIGENTE'), 2 => utf8_decode('URGENTE'), 3 => utf8_decode('ELABORAR INFORME'), 4 => 'ELABORAR CONTRATO', 5 => utf8_decode('SOLICITO SU AUTORIZACIÓN'), 6 => utf8_decode('PARA NOTIFICAR'), 7 => utf8_decode('COORDINAR REUNIÓN'),
+                                        8 => 'REALIZAR SEGUIMIENTO Y CONTROL', 9 => 'DAR CURSO', 10 => utf8_decode('ELABORAR RESOLUCIÓN'), 11 => utf8_decode('ELABORAR RESPUESTA'), 12 => utf8_decode('PARA SU CONSIDERACIÓN'), 13 => 'PROCESAR PAGO', 14 => utf8_decode('ARCHIVO'));
+                    $anchos = array(1 => 38, 2 => 13, 3 => 23, 4 => 23, 5 => 27, 6 => 19, 7 => 23, 
+                                    8 => 38, 9 => 13, 10 => 23, 11 => 23, 12 => 27, 13 => 19, 14 => 23);
+                    //primera fila
+                    for ($j = 1; $j <= 7; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
                             $pdf->Cell(4, 5, '', 1, FALSE, 'L');
-
-                            //ESPACIO
-                            $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
                         }
-                        $pdf->Ln();
-                        $pdf->Cell(200, 1, '', 'BRL', FALSE);
-                        $pdf->Ln(1);
-                        $pa = $pdf->GetY();
-                        //proveido
-                        $pdf->SetFontSize(8);
-                        $pdf->MultiCell(144, 5, utf8_decode(''), 'RL', 'L');
-                        $pdf->MultiCell(130, 5, '
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
+                    //segunda fila
+                    $pdf->ln();
+                    $pdf->SetFontSize(5);
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(200, 1, '', 'RL', FALSE);
+                    $pdf->Ln(1);
+                    for ($j = 8; $j <= 14; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
+                    $pdf->Ln();
+                    $pdf->Cell(200, 1, '', 'BRL', FALSE);
+                    $pdf->Ln(1);
+                    $pa = $pdf->GetY();
+                    //proveido
+                    $pdf->SetFontSize(8);
+                    $proveido = utf8_decode($p->proveido);
+                    //proveido
+                    if ($pro == 0) {
+                        $proveido = "";
+                    }
+
+                    $pdf->MultiCell(144, 2, $proveido, 'RL', 'L');
+                    $pdf->MultiCell(130, 4, '
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
@@ -319,12 +380,12 @@ class Controller_Print extends Controller {
                     FIRMA', '', 'C');
                         $pdf->SetXY(10, $pa);
                         $pdf->SetFontSize(10);
-                        $pdf->Cell(144, 38, '', 'RL', FALSE, 'L');
+                        $pdf->Cell(144, 33, '', 'RL', FALSE, 'L');
                         $pdf->SetTextColor(230, 230, 230);
                         $pdf->SetFontSize(20);
-                        $pdf->Cell(56, 38, 'Sello Recibido', 1, FALSE, 'C');
+                        $pdf->Cell(56, 33, 'Sello Recibido', 1, FALSE, 'C');
                         $pdf->SetTextColor(0);
-                        $pdf->Ln(38);
+                        $pdf->Ln(33);
                         $pdf->SetFillColor(240, 245, 255);
 
                         $pdf->SetFontSize(10);
@@ -972,7 +1033,7 @@ class Controller_Print extends Controller {
                         $text = substr($rs->referencia, 0, 240) . '..';
                     else
                         $text = $rs->referencia;
-                    $pdf->MultiCell(175, 5, utf8_decode($text), 'TR', 'L');
+                    $pdf->MultiCell(175, 10, utf8_decode($text), 'TR', 'L');
                     $pdf->Ln(1);
                 }
                 else {
@@ -1004,6 +1065,9 @@ class Controller_Print extends Controller {
                 $pdf->SetXY(10, 70);
                 $t = 0;
                 $proveidos = $modelo->proveidos($nur);
+                /*$pdf->SetFont('helvetica', '', 8);
+                $pdf->Cell(20, 5, 'prueba-> : ' . $modelo->proveidos($nur), 1, FALSE, 'L');
+                $pdf->Ln(10);*/
 
                 foreach ($proveidos as $p) {
 
@@ -1026,11 +1090,33 @@ class Controller_Print extends Controller {
                     $pdf->SetFillColor(240, 245, 255);
                     $pdf->Cell(200, 1, '', 'RL', FALSE);
                     $pdf->Ln(1);
-                    $acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
-                        5 => utf8_decode('COORDINAR REUNIÓN'), 6 => 'SOLICITO SU AUTORIZACION', 7 => 'ARCHIVO');
-                        $anchos = array(1 => 15, 2 => 35, 3 => 17, 4 => 27,
-                        5 => 26, 6 => 32, 7 => 14, 8 => 16);
-                    for ($j = 1; $j < 8; $j++) {
+                    /*$acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('DAR CURSO'), 3 => 'PROCESAR SEGUN NORMATIVA VIGENTE', 4 => 'REALIZAR SEGUIMIENTO Y CONTROL',
+                        5 => utf8_decode('SOLICITO SU ATORIZACIÓN'), 6 => 'ELABORAR INFORME', 7 => utf8_decode('ELABORAR RESOLUCIÓN'), 8 => 'ELABORAR CONTRATO', 9 => 'ELABORAR RESPUESTA', 10 => utf8_decode('PARA SU CONSIDERACIÓN'),
+                    11 => 'PARA NOTIFICAR', 12 => 'PROCESAR PAGO', 13 => utf8_decode('COORDINAR REUNIÓN'), 14 => 'ARCHIVO');
+                    $anchos = array(1 => 11, 2 => 12, 3 => 39, 4 => 35,
+                        5 => 25, 6 => 20, 7 => 24, 8 => 25, 9 => 26, 10 => 30, 11 => 20, 12 => 22, 13 => 25, 14 => 18);*/
+                    $acciones = array(1 => utf8_decode('PROCESAR SEGUN NORMATIVA VIGENTE'), 2 => utf8_decode('URGENTE'), 3 => utf8_decode('ELABORAR INFORME'), 4 => 'ELABORAR CONTRATO', 5 => utf8_decode('SOLICITO SU AUTORIZACIÓN'), 6 => utf8_decode('PARA NOTIFICAR'), 7 => utf8_decode('COORDINAR REUNIÓN'),
+                                    8 => 'REALIZAR SEGUIMIENTO Y CONTROL', 9 => 'DAR CURSO', 10 => utf8_decode('ELABORAR RESOLUCIÓN'), 11 => utf8_decode('ELABORAR RESPUESTA'), 12 => utf8_decode('PARA SU CONSIDERACIÓN'), 13 => 'PROCESAR PAGO', 14 => utf8_decode('ARCHIVO'));
+                    $anchos = array(1 => 38, 2 => 13, 3 => 23, 4 => 23, 5 => 27, 6 => 19, 7 => 23, 
+                                    8 => 38, 9 => 13, 10 => 23, 11 => 23, 12 => 27, 13 => 19, 14 => 23);
+                    //primera fila
+                    for ($j = 1; $j <= 7; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
+                            $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
+                    //segunda fila
+                    $pdf->ln();
+                    $pdf->SetFontSize(5);
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(200, 1, '', 'RL', FALSE);
+                    $pdf->Ln(1);
+                    for ($j = 8; $j <= 14; $j++) {
                         $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
                         if ($p->accion == $j) {
                             $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
@@ -1052,8 +1138,8 @@ class Controller_Print extends Controller {
                         $proveido = "";
                     }
 
-                    $pdf->MultiCell(144, 5, $proveido, 'RL', 'L');
-                    $pdf->MultiCell(130, 5, '
+                    $pdf->MultiCell(144, 2, $proveido, 'RL', 'L');
+                    $pdf->MultiCell(130, 4, '
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
@@ -1061,12 +1147,12 @@ class Controller_Print extends Controller {
                     FIRMA', '', 'C');
                     $pdf->SetXY(10, $pa);
                     $pdf->SetFontSize(10);
-                    $pdf->Cell(144, 39, '', 'RL', FALSE, 'L');
+                    $pdf->Cell(144, 30, '', 'RL', FALSE, 'L');
                     $pdf->SetTextColor(230, 230, 230);
                     $pdf->SetFontSize(20);
-                    $pdf->Cell(56, 39, 'Sello Recibido', 1, FALSE, 'C');
+                    $pdf->Cell(56, 30, 'Sello Recibido', 1, FALSE, 'C');
                     $pdf->SetTextColor(0);
-                    $pdf->Ln(39);
+                    $pdf->Ln(30);
                     $pdf->SetFillColor(240, 245, 255);
 
                     $pdf->SetFontSize(10);
@@ -1098,8 +1184,8 @@ class Controller_Print extends Controller {
                     } else {
                         $t++;
                     }
-                }
-                if ($t <= 7) {
+                }//$t=5;
+                if ($t <= 6) {
                     for ($i = 1; $i <= (7 - $t); $i++) {
                         $pdf->Ln(5);
                         $yy = $pdf->GetY();
@@ -1107,10 +1193,11 @@ class Controller_Print extends Controller {
                             // $y = $pdf->GetY();
                             // $pdf->SetXY(20, 20);
                             //$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
+                            /*$pdf->SetFontSize(9);
                             $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
                             $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);
+                            $pdf->SetXY(10, 13);*/
+                            $pdf->addPage();
                         }
                         
                         
@@ -1126,26 +1213,55 @@ class Controller_Print extends Controller {
                         $pdf->SetFillColor(240, 245, 255);
                         $pdf->Cell(200, 1, '', 'RL', FALSE);
                         $pdf->Ln(1);
-                        $acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('PROCESAR SEGÚN NORMATIVA'), 3 => 'DAR CURSO', 4 => 'ANALIZAR E INFORMAR',
-                        5 => utf8_decode('COORDINAR REUNIÓN'), 6 => 'SOLICITO SU AUTORIZACION', 7 => 'ARCHIVO');
-                        $anchos = array(1 => 15, 2 => 35, 3 => 17, 4 => 27,
-                        5 => 26, 6 => 32, 7 => 14);
-                        for ($j = 1; $j < 8; $j++) {
-                            $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
-
+                        /*$acciones = array(1 => utf8_decode('URGENTE'), 2 => utf8_decode('DAR CURSO'), 3 => 'PROCESAR SEGUN NORMATIVA VIGENTE', 4 => 'REALIZAR SEGUIMIENTO Y CONTROL',
+                        5 => utf8_decode('SOLICITO SU ATORIZACIÓN'), 6 => 'ELABORAR INFORME', 7 => utf8_decode('ELABORAR RESOLUCIÓN'), 8 => 'ELABORAR CONTRATO', 9 => 'ELABORAR RESPUESTA', 10 => utf8_decode('PARA SU CONSIDERACIÓN'),
+                    11 => 'PARA NOTIFICAR', 12 => 'PROCESAR PAGO', 13 => utf8_decode('COORDINAR REUNIÓN'), 14 => 'ARCHIVO');
+                    $anchos = array(1 => 11, 2 => 12, 3 => 39, 4 => 35,
+                        5 => 25, 6 => 20, 7 => 24, 8 => 25, 9 => 26, 10 => 30, 11 => 20, 12 => 22, 13 => 25, 14 => 18);*/
+                        $acciones = array(1 => utf8_decode('PROCESAR SEGUN NORMATIVA VIGENTE'), 2 => utf8_decode('URGENTE'), 3 => utf8_decode('ELABORAR INFORME'), 4 => 'ELABORAR CONTRATO', 5 => utf8_decode('SOLICITO SU AUTORIZACIÓN'), 6 => utf8_decode('PARA NOTIFICAR'), 7 => utf8_decode('COORDINAR REUNIÓN'),
+                                        8 => 'REALIZAR SEGUIMIENTO Y CONTROL', 9 => 'DAR CURSO', 10 => utf8_decode('ELABORAR RESOLUCIÓN'), 11 => utf8_decode('ELABORAR RESPUESTA'), 12 => utf8_decode('PARA SU CONSIDERACIÓN'), 13 => 'PROCESAR PAGO', 14 => utf8_decode('ARCHIVO'));
+                        $anchos = array(1 => 38, 2 => 13, 3 => 23, 4 => 23, 5 => 27, 6 => 19, 7 => 23, 
+                                    8 => 38, 9 => 13, 10 => 23, 11 => 23, 12 => 27, 13 => 19, 14 => 23);
+                    //primera fila
+                    for ($j = 1; $j <= 7; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
                             $pdf->Cell(4, 5, '', 1, FALSE, 'L');
-
-                            //ESPACIO
-                            $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
                         }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
+                    //segunda fila
+                    $pdf->ln();
+                    $pdf->SetFontSize(5);
+                    $pdf->SetFillColor(240, 245, 255);
+                    $pdf->Cell(200, 1, '', 'RL', FALSE);
+                    $pdf->Ln(1);
+                    for ($j = 8; $j <= 14; $j++) {
+                        $pdf->Cell($anchos[$j], 5, $acciones[$j], 1, FALSE, 'C');
+                        if ($p->accion == $j) {
+                            $pdf->Cell(4, 5, 'X', 1, FALSE, 'L', TRUE);
+                        } else {
+                            $pdf->Cell(4, 5, '', 1, FALSE, 'L');
+                        }
+                        //ESPACIO
+                        $pdf->Cell(1, 5, '', 0, FALSE, 'L');
+                    }
                         $pdf->Ln();
                         $pdf->Cell(200, 1, '', 'BRL', FALSE);
                         $pdf->Ln(1);
                         $pa = $pdf->GetY();
                         //proveido
                         $pdf->SetFontSize(8);
-                        $pdf->MultiCell(144, 5, utf8_decode(''), 'RL', 'L');
-                        $pdf->MultiCell(130, 5, '
+                        $proveido = utf8_decode($p->proveido);
+                    //proveido
+                    if ($pro == 0) {
+                        $proveido = "";
+                    }
+                        $pdf->MultiCell(144, 2, utf8_decode($proveido), 'RL', 'L');
+                        $pdf->MultiCell(130, 4, '
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
@@ -1153,12 +1269,12 @@ class Controller_Print extends Controller {
                     FIRMA', '', 'C');
                         $pdf->SetXY(10, $pa);
                         $pdf->SetFontSize(10);
-                        $pdf->Cell(144, 38, '', 'RL', FALSE, 'L');
+                        $pdf->Cell(144, 33, '', 'RL', FALSE, 'L');
                         $pdf->SetTextColor(230, 230, 230);
                         $pdf->SetFontSize(20);
-                        $pdf->Cell(56, 38, 'Sello Recibido', 1, FALSE, 'C');
+                        $pdf->Cell(56, 33, 'Sello Recibido', 1, FALSE, 'C');
                         $pdf->SetTextColor(0);
-                        $pdf->Ln(38);
+                        $pdf->Ln(33);
                         $pdf->SetFillColor(240, 245, 255);
 
                         $pdf->SetFontSize(10);
