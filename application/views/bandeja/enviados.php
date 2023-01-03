@@ -370,7 +370,7 @@
         });
 
 //Close Popups and Fade Layer
-        $('a.close, #fade, #cancelar').live('click', function () { //When clicking on the close or fade layer...
+        $('a.close, #fade, #cancelar').on('click', function () { //When clicking on the close or fade layer...
             $('#fade , .popup_block').fadeOut(function () {
                 $('#fade, a.close').remove();  //fade them both out
             });

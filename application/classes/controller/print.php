@@ -305,9 +305,10 @@ class Controller_Print extends Controller {
                             // $pdf->SetXY(20, 20);
                             //$pdf->SetXY(10, 4);
                             $pdf->SetFontSize(9);
-                            $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
+                            /*$pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
+                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');*/
                             $pdf->SetXY(10, 13);
+                            $pdf->addPage();
                         }
                         
                         
@@ -371,7 +372,7 @@ class Controller_Print extends Controller {
                         $proveido = "";
                     }
 
-                    $pdf->MultiCell(144, 2, $proveido, 'RL', 'L');
+                    $pdf->MultiCell(144, 2, '', 'RL', 'L');
                     $pdf->MultiCell(130, 4, '
                     ---------------------------------------------------------------------------------------------------------------------
                     ---------------------------------------------------------------------------------------------------------------------
