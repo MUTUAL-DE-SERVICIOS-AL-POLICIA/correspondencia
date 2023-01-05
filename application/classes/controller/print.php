@@ -304,11 +304,11 @@ class Controller_Print extends Controller {
                             // $y = $pdf->GetY();
                             // $pdf->SetXY(20, 20);
                             //$pdf->SetXY(10, 4);
-                            $pdf->SetFontSize(9);
-                            /*$pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
-                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');*/
-                            $pdf->SetXY(10, 13);
                             $pdf->addPage();
+                            $pdf->SetFontSize(9);
+                            $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
+                            $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
+                            $pdf->SetXY(10, 13);
                         }
                         
                         
@@ -1194,11 +1194,11 @@ class Controller_Print extends Controller {
                             // $y = $pdf->GetY();
                             // $pdf->SetXY(20, 20);
                             //$pdf->SetXY(10, 4);
-                            /*$pdf->SetFontSize(9);
+                            $pdf->addPage();
+                            $pdf->SetFontSize(9);
                             $pdf->Cell(100, 2, "CITE: " . $rs->cite_original, 0, FALSE, 'L');
                             $pdf->Cell(100, 2, $rs->nur, 0, FALSE, 'R');
-                            $pdf->SetXY(10, 13);*/
-                            $pdf->addPage();
+                            $pdf->SetXY(10, 13);
                         }
                         
                         
