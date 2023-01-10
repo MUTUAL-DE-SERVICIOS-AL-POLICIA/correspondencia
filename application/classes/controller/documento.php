@@ -117,7 +117,8 @@ class Controller_Documento extends Controller_DefaultTemplate {
                 $documento = ORM::factory('documentos'); //intanciamos el modelo documentos                        
                 $documento->id_user = $this->user->id;
                 $documento->id_tipo = $tipo->id;
-                $documento->id_proceso = $proceso;
+                //$documento->id_proceso = $proceso;
+                $documento->id_proceso = 1;
                 $documento->id_oficina = $oficina_id;
 
                 $documento->codigo = $codigo;
@@ -252,7 +253,7 @@ class Controller_Documento extends Controller_DefaultTemplate {
             $procesos = ORM::factory('procesos')->find_all();
             $options = array('' => '[Elija proceso]');
             foreach ($procesos as $p) {
-                $options[$p->id] = $p->proceso;
+                $options[$p->id] = 2;
             }
             // $this->template->scripts    = array('ckeditor/adapters/jquery.js','ckeditor/ckeditor.js');                                  
             $this->template->scripts = array('static/js/libs/select2/select2.min.js','static/js/eModal.min.js');
@@ -325,7 +326,8 @@ class Controller_Documento extends Controller_DefaultTemplate {
                 $documento->hojas = $_POST['hojas'];
                 $documento->nombre_via = $_POST['via'];
                 $documento->cargo_via = $_POST['cargovia'];
-                $documento->id_proceso = $_POST['proceso'];
+                //$documento->id_proceso = $_POST['proceso'];
+                $documento->id_proceso = 2;
                 $documento->save();
                 $mensajes['Modificado!'] = 'El documento se modifico correctamente.';
                 $this->save($this->user->id_entidad, $this->user->id, $this->user->nombre.', modificó el documento: <b>' . $documento->cite_original . '</b>');

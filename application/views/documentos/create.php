@@ -142,10 +142,10 @@
                             </div>
                             <input style="display:none;" type="submit" class="button" name="submit" id="cite_sup" value="GENERAR CON CITE DIR/DESPACHO"/>
                         <?php endif; ?>
-                        <div class="form-group ">
-                            <?php echo Form::select('proceso', $options, '', array('class' => 'required form-control','title'=>'Elija un tipo de proceso por favor')); ?><br/>    
+                        <!--<div class="form-group ">
+                            <?php// echo Form::select('proceso', $options, '', array('class' => 'required form-control','title'=>'Elija un tipo de proceso por favor')); ?><br/>    
                             <label for="proceso">Proceso: </label>
-                        </div>
+                        </div>-->
                         <?php if ($documento->tipo == 'Carta'): ?>
                             <div class="form-group">
                                 <label>Titulo:</label>

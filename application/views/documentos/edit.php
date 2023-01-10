@@ -150,10 +150,10 @@
 
                 <div class="card-body no-padding  ">
                     <div class="col-lg-6 col-md-6">
-                        <div class="form-group">
-                            <?php echo Form::select('proceso', $options, $documento->id_proceso, array('class' => 'required form-control')); ?><br/>    
+                        <!--<div class="form-group">
+                            <?php// echo Form::select('proceso', $options, $documento->id_proceso, array('class' => 'required form-control')); ?><br/>    
                             <label for="proceso">Proceso: </label>
-                        </div>
+                        </div>-->
                         <?php if ($documento->id_tipo == 5): ?>
                             <div class="form-group">
                                 <?php $titulo = array('', 'Señor' => 'Señor', 'Señora' => 'Señora', 'Señores' => 'Señores'); ?>
