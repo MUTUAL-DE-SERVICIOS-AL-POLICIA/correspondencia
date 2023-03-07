@@ -1736,4 +1736,33 @@ class Controller_Ajax extends Controller {
         $vitacora->save();
     }
 
+    public function action_desagrupar()
+    {
+        if (isset($_POST['id_padre'])) {
+            $id_padre = $_POST['id_padre'];
+            $padre = ORM::factory('seguimiento')->where('id', '=', $id_padre)->find();
+            $sql = "SELECT * from agrupaciones a WHERE a.padre = '$padre->nur'";
+            $mAgrupaciones = new Model_agrupaciones();
+            $hijos = $mAgrupaciones->sql($sql);
+            for($i = 0; $i < count($hijos) ; $i++)
+            {
+                $nur = $hijos[$i]['hijo'];
+                $sql = "SELECT * from seguimiento s WHERE s.nur = '$nur' and s.estado = 6";
+                $mSeguimiento = new Model_seguimiento();
+                $hijo_seg = $mSeguimiento->sql($sql);
+                for( $j = 0; $j < count($hijo_seg); $j++)
+                {
+                    $hijo_seguimiento = ORM::factory('seguimiento')->where('id', '=', $hijo_seg[$j]['id'])->find();
+                    $hijo_seguimiento->estado = 2;
+                    $hijo_seguimiento->hijo = 0;
+                    $hijo_seguimiento->save();
+                }
+            }
+            $delete = "DELETE FROM agrupaciones WHERE padre = '$padre->nur'";
+            $delete = $mAgrupaciones->sql($delete);
+            $padre->hijo = 0;
+            $padre->estado = 2;
+            $padre->save();
+        }
+    }
 }

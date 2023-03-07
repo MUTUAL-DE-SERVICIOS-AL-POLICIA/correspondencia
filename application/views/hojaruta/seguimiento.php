@@ -17,7 +17,44 @@
         $('html, body').animate({
             scrollTop: $("#scroll").offset().top
         }, 1000);
+        $('#desagrupar').bind('click', function () {
+            desagrupar();
+            return false;
+        });
     });
+    function visible(text)
+    {
+        //Fade in Background
+        $('body').append('<div id="fade"></div>'); //Add the fade layer to bottom of the body tag.
+        $('#fade').css({'filter': 'alpha(opacity=80)'}).fadeIn(); //Fade in the fade layer - .css({'filter' : 'alpha(opacity=80)'}) is used to fix the IE Bug on fading transparencies 
+        $('#loading').css({'filter': 'alpha(opacity=80)'}).fadeIn().append('<span>').html('<img src="/media/images/load-indicator.gif" align="absmiddle" alt="" /> ' + text);
+    }
+
+    function ocultar()
+    {
+        $('#fade , #loading').fadeOut(function () {
+            $('#fade, a.close').remove();  //fade them both out
+        });
+        location.reload();
+    }
+    
+    function desagrupar()
+    {
+        var id_padre = $('#id_padre').val();
+        visible('Desagrupando...')
+        $.ajax({
+            type: "POST",
+            data: {id_padre: id_padre},
+            url: "/ajax/desagrupar",
+            dataType: "json",
+            success: function (item){
+                ocultar();
+            },
+            error: function () {
+                ocultar();
+            }
+        });
+    }
 </script>
 
 <?php if (sizeof($seguimiento) > 0) { ?>
@@ -300,12 +337,21 @@
                         <strong>Agrupado con: </strong> 
                         <?php
                         $hijos = ORM::factory('agrupaciones')->where('padre', '=', $detalle['nur'])->find_all();
+                        $auth = Auth::instance();
+                        $id_propietario = 0;
                         foreach ($hijos as $h):
                             ?>
                             <a href="/route/trace/?hr=<?php echo $h->hijo; ?>" style="color:#1C4781; font-size: 14px; text-decoration: underline;  " ><?php echo $h->hijo; ?></a>
-                        <?php endforeach; ?>
+                        <?php $id_propietario = $h->id_user; endforeach; ?>
 
-                    </div>                
+                        <!--desagrupar-->
+                    <?php if ($auth->get_user()->id == $id_propietario): ?>
+                        </div>
+                            <a href="#" id="desagrupar" class="btn btn-sm btn-primary">Desagrupar</a>
+                            <input type="hidden" id="id_padre" name="id_padre" value=<?php echo $id_padre ?> ></input>
+                        <div>
+                        <?php endif; ?>
+                    </div>
                 <?php else: ?>
                     <input type="hidden" id="hijo" value="0" name="hijo"/>
                 <?php endif; ?>

@@ -82,6 +82,7 @@ class Controller_route extends Controller_DefaultTemplate {
             $user = $this->user;
             //agrupaciones
             $agrupado = ORM::factory('agrupaciones')->where('hijo', '=', $id)->find();
+            $padre = ORM::factory("seguimiento")->where('nur', '=', $id)->and_where('hijo', '=', 1)->and_where('estado', '=', 2)->find();
             $this->template->title = 'Seguimiento a la hoja de ruta : ' . $detalle['nur'];
             $this->template->styles = array('media/css/tablas.css' => 'all');
             $this->template->content = View::factory('hojaruta/seguimiento')
@@ -89,7 +90,8 @@ class Controller_route extends Controller_DefaultTemplate {
                     ->bind('detalle', $detalle)
                     ->bind('archivo', $archivo)
                     ->bind('user', $user)
-                    ->bind('agrupado', $agrupado);
+                    ->bind('agrupado', $agrupado)
+                    ->bind('id_padre', $padre->id);
 
             //var_dump($seguimiento);
         } else {
@@ -126,6 +128,7 @@ class Controller_route extends Controller_DefaultTemplate {
             //$seguimiento=ORM::factory('seguimiento')->where('nur','=',$id)->find_all();            
             $oSeg = New Model_Seguimiento();
             $seguimiento = $oSeg->seguimiento($id);
+            $padre = ORM::factory("seguimiento")->where('nur', '=', $id)->and_where('hijo', '=', 1)->and_where('estado', '=', 2)->find();
             //$f = $oSeg->archivado($id);
             $oficina = $this->user->id_oficina;
             $user = $this->user;
@@ -143,7 +146,8 @@ class Controller_route extends Controller_DefaultTemplate {
                     // ->bind('f', $f)
                     ->bind('oficina', $oficina)
                     ->bind('user', $user)
-                    ->bind('agrupado', $agrupado);
+                    ->bind('agrupado', $agrupado)
+                    ->bind('id_padre', $padre->id);
         } else {
             $this->request->redirect('route/view');
         }
