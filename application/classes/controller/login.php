@@ -36,7 +36,7 @@ class Controller_login extends Controller_Mintemplate {
                             where u.cargo like 'Dirección%'"
                     $modelo = new Model_Users();
                     $report=$modelo->select($sql);*/
-                    $no_ldap = [11,32,37,148,150,10004];
+                    $no_ldap = [11,32,37,148,150,10004,10007];
                     if($ldap && $usuario_ventanilla->nivel <> 4 && $usuario_ventanilla->nivel <> 5 && !in_array($usuario_ventanilla->id,$no_ldap))
                     {
                         //obtencion de datos de configuracion al ldap
