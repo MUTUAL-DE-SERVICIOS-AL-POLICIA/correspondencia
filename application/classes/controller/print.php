@@ -149,7 +149,7 @@ class Controller_Print extends Controller {
                 //$pdf->Cell(25, 5, 'PROCESO', 'LTB', FALSE, 'l');
                 //$pdf->Cell(47, 5, utf8_decode($rs->proceso), 'TRB', 'L');
                 //MODIFICADO POR QC
-                if($rs->id_tipo != 6)
+                /*if($rs->id_tipo != 6)
                 {
                     $pdf->Cell(25, 5, 'PROCESO:', 'LTB', FALSE, 'l');
                     $pdf->Cell(47, 5, $rs->proceso, 'TRB', 'L');
@@ -158,10 +158,10 @@ class Controller_Print extends Controller {
                 {
                     $pdf->Cell(25, 5, '', 'LTB', FALSE, 'l');
                     $pdf->Cell(47, 5, '', 'TRB', 'L');
-                } 
+                }*/ 
                 //FIN MODIFICADO POR QC
                 $pdf->SetFont('helvetica', '', 7);
-                $pdf->Cell(108, 5, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
+                $pdf->Cell(180, 5, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
                 $pdf->SetFont('helvetica', '', 8);
                 $pdf->Cell(20, 5, 'HOJAS : ' . $rs->hojas, 1, FALSE, 'L');
                 $pdf->Ln(10);
@@ -1037,7 +1037,7 @@ class Controller_Print extends Controller {
                 }
 
                 $pdf->SetFont('helvetica', '', 8);
-                if($rs->id_tipo != 6)
+                /*if($rs->id_tipo != 6)
                 {
                     $pdf->Cell(25, 5, 'PROCESO:', 'LTB', FALSE, 'l');
                     $pdf->Cell(47, 5, $rs->proceso, 'TRB', 'L');
@@ -1046,10 +1046,10 @@ class Controller_Print extends Controller {
                 {
                     $pdf->Cell(25, 5, '', 'LTB', FALSE, 'l');
                     $pdf->Cell(47, 5, '', 'TRB', 'L');
-                } 
+                }*/ 
                 //FIN MODIFICADO POR QC
                 $pdf->SetFont('helvetica', '', 7);
-                $pdf->Cell(108, 5, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
+                $pdf->Cell(180, 5, 'ADJUNTO: ' . utf8_decode($rs->adjuntos), 1, FALSE, 'L');
                 $pdf->SetFont('helvetica', '', 8);
                 $pdf->Cell(20, 5, 'HOJAS : ' . $rs->hojas, 1, FALSE, 'L');
                 $pdf->Ln(10);
