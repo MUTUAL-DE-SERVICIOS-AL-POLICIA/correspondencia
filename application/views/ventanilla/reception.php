@@ -93,14 +93,9 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <?php
-                                echo Form::input('submit', 'Recepcionar Documento', array('type' => 'submit', 'index' => 10, 'class' => 'btn  btn-primary-dark', 'id' => 'crear'));
+                                //echo Form::input('submit', 'Recepcionar Documento', array('type' => 'submit', 'index' => 10, 'class' => 'btn  btn-primary-dark', 'id' => 'crear'));
                                 ?> 
-
-                                <?php
-                                //echo Form::input('cite', Arr::get($_POST, 'cite', ''), array('id' => 'cite', 'size' => 40, 'class' => 'form-control required'));
-                                //echo Form::label('cite', 'Cite original:', array('class' => ''));
-                                ?>
-                                <label class="text-xl" for="submit">    </label>
+                                <button type="button" class="btn btn-primary" id="btnSubmit">Recepcionar Documento</button>
                             </div>
                             <div class="form-group">
                                 <?php
@@ -164,6 +159,40 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Tu código aquí
+    document.getElementById('btnSubmit').addEventListener('click', function () {
+        // Abre el modal de confirmación
+        $('#confirmModal').modal('show');
+    });
+
+    document.getElementById('confirmSubmit').addEventListener('click', function () {
+        // Envía el formulario
+        document.getElementById('frmCreate').submit();
+    });
+});
+</script>
+<!-- Modal de confirmación (definido una sola vez) -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">CONFIRMACIÓN</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿ESTÁ SEGURO DE RECEPCIONAR EL DOCUMENTO?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
+                <button type="button" class="btn btn-primary" id="confirmSubmit">RECEPCIONAR</button>
+            </div>
         </div>
     </div>
 </div>
